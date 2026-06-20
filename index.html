@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shri Jee Tifin Seva – Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root {
+  --violet: #3b0764; --plum: #6b21a8; --gold: #fbbf24;
+  --lotus: #f472b6; --teal: #0f766e; --cream: #fdf4e7;
+  --green: #16a34a; --red: #dc2626; --text: #1c1917;
+  --card: #ffffff; --border: #e5e7eb; --muted: #6b7280;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+  background: linear-gradient(160deg, #2d0a4e 0%, #1a0533 40%, #0f172a 100%);
+  min-height: 100vh; padding: 0 0 40px;
+}
+
+/* HERO HEADER */
+.hero {
+  background: linear-gradient(135deg, #3b0764, #6b21a8, #4c1d95);
+  padding: 28px 20px 22px; text-align: center; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: '🪷'; position: absolute; right: -10px; bottom: -10px;
+  font-size: 7rem; opacity: .07; line-height: 1;
+}
+.hero-icon { font-size: 2.2rem; display: block; filter: drop-shadow(0 0 12px rgba(251,191,36,.6)); }
+.hero h1 { font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: var(--gold); text-shadow: 0 0 20px rgba(251,191,36,.5); line-height: 1.1; }
+.hero h1 span { display: block; font-family: 'Noto Sans Devanagari', sans-serif; font-size: 1rem; font-weight: 700; color: var(--lotus); margin-top: 2px; }
+.hero p { font-size: .78rem; color: #d8b4fe; margin-top: 6px; font-style: italic; }
+
+/* STEP INDICATOR */
+.steps {
+  display: flex; justify-content: center; gap: 0;
+  background: rgba(0,0,0,.3); padding: 12px 20px; margin-bottom: 4px;
+}
+.step { display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 80px; position: relative; }
+.step:not(:last-child)::after {
+  content: ''; position: absolute; top: 13px; left: 60%; width: 80%; height: 2px;
+  background: rgba(251,191,36,.25);
+}
+.step.done:not(:last-child)::after { background: var(--gold); }
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(251,191,36,.15); border: 2px solid rgba(251,191,36,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem; font-weight: 700; color: rgba(251,191,36,.5);
+  transition: all .3s; position: relative; z-index: 1;
+}
+.step.active .step-dot { background: var(--gold); border-color: var(--gold); color: var(--violet); }
+.step.done .step-dot { background: var(--green); border-color: var(--green); color: #fff; }
+.step-lbl { font-size: .52rem; color: rgba(255,255,255,.4); margin-top: 4px; text-align: center; }
+.step.active .step-lbl { color: var(--gold); }
+.step.done .step-lbl { color: #86efac; }
+
+/* SECTIONS */
+.section { display: none; padding: 16px; }
+.section.active { display: block; }
+
+/* CARD */
+.card {
+  background: var(--card); border-radius: 16px;
+  padding: 18px; margin-bottom: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+}
+.card-title {
+  font-size: .78rem; font-weight: 700; color: var(--plum);
+  text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 2px solid #f3e8ff; padding-bottom: 8px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* MEAL SELECTOR — tap cards, no boring dropdowns */
+.meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.meal-card {
+  border: 2px solid var(--border); border-radius: 12px;
+  padding: 12px 10px; text-align: center; cursor: pointer;
+  transition: all .2s; background: #fafafa; position: relative;
+}
+.meal-card:active { transform: scale(.97); }
+.meal-card.selected { border-color: var(--plum); background: #f3e8ff; }
+.meal-card.selected::after {
+  content: '✓'; position: absolute; top: 6px; right: 8px;
+  font-size: .65rem; font-weight: 700; color: var(--plum);
+}
+.meal-emoji { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+.meal-name-hi { font-family: 'Noto Sans Devanagari', sans-serif; font-weight: 700; font-size: .82rem; color: var(--text); display: block; }
+.meal-name-en { font-size: .65rem; color: var(--muted); display: block; margin-top: 1px; }
+.meal-price { font-size: .72rem; font-weight: 700; color: var(--plum); display: block; margin-top: 4px; }
+.meal-qty-info { font-size: .58rem; color: var(--muted); display: block; margin-top: 2px; line-height: 1.4; }
+
+/* SEASONAL BADGE */
+.seasonal { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e;
+  font-size: .58rem; padding: 1px 7px; border-radius: 20px; display: inline-block; margin-top: 3px; }
+
+/* QTY STEPPER */
+.qty-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.qty-label { font-size: .78rem; font-weight: 600; color: var(--text); }
+.qty-sub { font-size: .6rem; color: var(--muted); display: block; }
+.stepper { display: flex; align-items: center; gap: 0; border: 2px solid #e9d5ff; border-radius: 10px; overflow: hidden; }
+.stepper button {
+  width: 36px; height: 36px; border: none; cursor: pointer; font-size: 1.1rem;
+  font-weight: 700; transition: background .15s;
+  background: #f3e8ff; color: var(--plum);
+}
+.stepper button:active { background: #e9d5ff; }
+.stepper input {
+  width: 44px; height: 36px; border: none; text-align: center;
+  font-size: .9rem; font-weight: 700; color: var(--text); background: #fff;
+  -moz-appearance: textfield;
+}
+.stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* FORM INPUTS */
+.field { margin-bottom: 13px; }
+.field label { display: block; font-size: .72rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.field label span { color: var(--red); }
+.field input, .field textarea, .field select {
+  width: 100%; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px;
+  font-size: .82rem; font-family: inherit; color: var(--text); background: #fafafa;
+  transition: border .2s; outline: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--plum); background: #fff; }
+.field textarea { resize: vertical; min-height: 70px; }
+
+/* TIME SLOTS */
+.slot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.slot {
+  border: 2px solid var(--border); border-radius: 9px; padding: 7px 4px;
+  text-align: center; cursor: pointer; font-size: .68rem; color: var(--muted);
+  transition: all .2s; background: #fafafa;
+}
+.slot.selected { border-color: var(--plum); background: #f3e8ff; color: var(--plum); font-weight: 700; }
+
+/* MONTHLY PLAN TOGGLE */
+.plan-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.plan-opt {
+  border: 2px solid var(--border); border-radius: 12px; padding: 12px 10px; text-align: center;
+  cursor: pointer; transition: all .2s; background: #fafafa;
+}
+.plan-opt.selected { border-color: var(--teal); background: #f0fdfa; }
+.plan-opt .po-icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+.plan-opt .po-name { font-size: .75rem; font-weight: 700; color: var(--text); display: block; }
+.plan-opt .po-price { font-size: .68rem; color: var(--teal); font-weight: 600; display: block; margin-top: 2px; }
+.plan-opt .po-save { font-size: .58rem; color: var(--green); display: block; }
+
+/* ORDER SUMMARY BOX */
+.summary-box {
+  background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 12px;
+  padding: 14px; margin-bottom: 14px;
+}
+.summary-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 5px 0; border-bottom: 1px dashed #e9d5ff; font-size: .78rem; }
+.summary-row:last-child { border-bottom: none; }
+.summary-row .sl { color: var(--muted); }
+.summary-row .sv { font-weight: 600; color: var(--text); text-align: right; max-width: 60%; }
+.summary-total { background: var(--plum); color: #fff; border-radius: 9px; padding: 10px 14px; display: flex; justify-content: space-between; font-weight: 700; font-size: .9rem; margin-top: 10px; }
+.min-order-note { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 8px 12px; font-size: .68rem; color: #92400e; margin-bottom: 12px; }
+
+/* PAYMENT SECTION */
+.pay-method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.pay-opt {
+  border: 2px solid var(--border); border-radius: 10px; padding: 11px 8px;
+  text-align: center; cursor: pointer; transition: all .2s; background: #fafafa;
+}
+.pay-opt.selected { border-color: var(--green); background: #f0fdf4; }
+.pay-opt .pay-icon { font-size: 1.5rem; display: block; margin-bottom: 3px; }
+.pay-opt .pay-name { font-size: .68rem; font-weight: 600; color: var(--text); display: block; }
+.pay-opt .pay-sub { font-size: .56rem; color: var(--muted); display: block; }
+
+/* UPI PAYMENT BOX */
+.upi-box { background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 14px; text-align: center; }
+.upi-box .upi-title { font-size: .72rem; font-weight: 700; color: var(--green); margin-bottom: 10px; }
+.upi-id-box { background: #fff; border: 2px dashed #86efac; border-radius: 8px; padding: 10px; margin: 10px 0; }
+.upi-id { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: 1px; }
+.upi-name { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+.copy-btn {
+  background: var(--green); color: #fff; border: none; border-radius: 8px;
+  padding: 7px 16px; font-size: .7rem; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: background .2s;
+}
+.copy-btn:active { background: #15803d; }
+.pay-apps { display: flex; justify-content: center; gap: 16px; margin: 12px 0; flex-wrap: wrap; }
+.pay-app { font-size: .62rem; color: var(--muted); text-align: center; }
+.pay-app-icon { font-size: 1.6rem; display: block; margin-bottom: 2px; }
+
+/* UPI QR inside payment */
+.upi-qr-wrap { background: #fdf4e7; border: 3px solid var(--gold); border-radius: 12px; padding: 10px; display: inline-block; margin: 8px 0; }
+.upi-qr-wrap img { width: 130px; height: 130px; display: block; image-rendering: pixelated; }
+.qr-label { font-size: .62rem; color: var(--muted); margin-top: 5px; }
+
+/* CASH BOX */
+.cash-box { background: #fffbeb; border: 2px solid #fcd34d; border-radius: 12px; padding: 14px; text-align: center; }
+.cash-box .cash-icon { font-size: 2.5rem; display: block; margin-bottom: 6px; }
+.cash-box p { font-size: .75rem; color: #78350f; line-height: 1.7; }
+.cash-box strong { color: #92400e; }
+
+/* SCREENSHOT UPLOAD */
+.upload-area {
+  border: 2px dashed #86efac; border-radius: 12px; padding: 20px;
+  text-align: center; background: #f0fdf4; cursor: pointer; margin-top: 12px;
+  transition: all .2s;
+}
+.upload-area:active { background: #dcfce7; }
+.upload-area.has-file { border-color: var(--green); background: #dcfce7; }
+.upload-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+.upload-text { font-size: .72rem; color: var(--muted); }
+.upload-text strong { color: var(--green); display: block; font-size: .82rem; margin-bottom: 3px; }
+.upload-preview { max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 10px; display: none; }
+#fileInput { display: none; }
+
+/* TXNID INPUT */
+.txnid-row { display: flex; gap: 8px; align-items: flex-end; margin-top: 10px; }
+.txnid-row .field { flex: 1; margin-bottom: 0; }
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%; padding: 14px; border: none; border-radius: 12px; cursor: pointer;
+  font-size: .92rem; font-weight: 700; font-family: inherit;
+  background: linear-gradient(90deg, #6b21a8, #9333ea); color: #fff;
+  box-shadow: 0 4px 15px rgba(107,33,168,.4); transition: all .2s;
+}
+.btn-primary:active { transform: scale(.98); box-shadow: none; }
+.btn-primary:disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; }
+.btn-secondary {
+  width: 100%; padding: 12px; border: 2px solid #e9d5ff; border-radius: 12px;
+  cursor: pointer; font-size: .82rem; font-weight: 600; font-family: inherit;
+  background: #fff; color: var(--plum); transition: all .2s; margin-top: 8px;
+}
+.btn-secondary:active { background: #f3e8ff; }
+
+/* SUCCESS SCREEN */
+.success-screen { display: none; padding: 30px 20px; text-align: center; }
+.success-icon { font-size: 4rem; display: block; margin-bottom: 14px; animation: pop .4s ease; }
+@keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.success-screen h2 { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+.success-screen p { font-size: .78rem; color: #d8b4fe; line-height: 1.8; }
+.order-id-box { background: rgba(251,191,36,.15); border: 1px solid rgba(251,191,36,.4); border-radius: 10px; padding: 12px; margin: 14px 0; }
+.order-id-box .oid-lbl { font-size: .62rem; color: rgba(251,191,36,.7); letter-spacing: 1px; text-transform: uppercase; display: block; }
+.order-id-box .oid-val { font-size: 1.2rem; font-weight: 700; color: var(--gold); display: block; margin-top: 2px; }
+.wa-confirm-btn {
+  display: block; background: #16a34a; color: #fff; border: none; border-radius: 12px;
+  padding: 14px 20px; font-size: .88rem; font-weight: 700; font-family: inherit;
+  cursor: pointer; width: 100%; margin-top: 14px;
+  box-shadow: 0 4px 15px rgba(22,163,74,.4);
+}
+
+/* ERROR */
+.error-msg { color: var(--red); font-size: .65rem; margin-top: 4px; display: none; }
+.field.error input, .field.error textarea { border-color: var(--red); }
+.field.error .error-msg { display: block; }
+
+/* NOTE */
+.note { background: #fdf4e7; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 9px 12px; font-size: .68rem; color: #78350f; line-height: 1.7; margin-bottom: 12px; }
+
+/* FOOTER */
+.form-footer { text-align: center; padding: 8px 16px; font-size: .62rem; color: rgba(255,255,255,.3); }
+
+/* MIN ORDER WARNING */
+.min-warn { background: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px; padding: 10px 13px; font-size: .72rem; color: var(--red); display: none; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-icon">🦚</span>
+  <h1>Shri Jee Tifin Seva<span>श्री जी टिफिन सेवा</span></h1>
+  <p>घर जैसा स्वाद, सेहत के साथ ❤️ · Ghar jaisa swad, sehat ke saath</p>
+</div>
+
+<!-- STEP INDICATOR -->
+<div class="steps">
+  <div class="step active" id="step1">
+    <div class="step-dot">1</div>
+    <div class="step-lbl">मेन्यू<br>Menu</div>
+  </div>
+  <div class="step" id="step2">
+    <div class="step-dot">2</div>
+    <div class="step-lbl">पता<br>Details</div>
+  </div>
+  <div class="step" id="step3">
+    <div class="step-dot">3</div>
+    <div class="step-lbl">भुगतान<br>Payment</div>
+  </div>
+  <div class="step" id="step4">
+    <div class="step-dot">4</div>
+    <div class="step-lbl">पूर्ण<br>Done</div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 1: MENU SELECTION ═══ -->
+<div class="section active" id="sec1">
+
+  <!-- Plan type -->
+  <div class="card">
+    <div class="card-title">📦 Plan चुनें · Choose Plan</div>
+    <div class="plan-toggle">
+      <div class="plan-opt selected" onclick="selectPlan(this,'daily')" data-plan="daily">
+        <span class="po-icon">🍱</span>
+        <span class="po-name">Daily Order</span>
+        <span class="po-name" style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;">रोज़ाना</span>
+        <span class="po-price">Per meal price</span>
+        <span class="po-save">Order anytime</span>
+      </div>
+      <div class="plan-opt" onclick="selectPlan(this,'monthly')" data-plan="monthly">
+        <span class="po-icon">📅</span>
+        <span class="po-name">Monthly Pack</span>
+        <span class="po-name" style="font-family:'Noto Sans Devanagari',sans-serif;font-size:.72rem;">मासिक पैक</span>
+        <span class="po-price">Save 10%</span>
+        <span class="po-save">Advance payment</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meal selection -->
+  <div class="card">
+    <div class="card-title">🍽️ खाना चुनें · Select Meals</div>
+    <div class="note">🌿 मौसमी सब्जियाँ उपलब्धता अनुसार बदलती हैं · Seasonal vegetables change with availability</div>
+    <div class="meal-grid">
+
+      <div class="meal-card" onclick="toggleMeal(this,'breakfast')" data-meal="breakfast" data-price="65">
+        <span class="meal-emoji">🌅</span>
+        <span class="meal-name-hi">नाश्ता</span>
+        <span class="meal-name-en">Breakfast</span>
+        <span class="meal-price">₹65/person</span>
+        <span class="meal-qty-info">2 परांठे/पोहा + चटनी/दही</span>
+        <span class="seasonal">🌿 As per season</span>
+      </div>
+
+      <div class="meal-card" onclick="toggleMeal(this,'lunch')" data-meal="lunch" data-price="90">
+        <span class="meal-emoji">☀️</span>
+        <span class="meal-name-hi">दोपहर</span>
+        <span class="meal-name-en">Lunch</span>
+        <span class="meal-price">₹90/person</span>
+        <span class="meal-qty-info">3 रोटी + चावल + दाल + मौसमी सब्जी</span>
+        <span class="seasonal">🌿 As per season</span>
+      </div>
+
+      <div class="meal-card" onclick="toggleMeal(this,'dinner')" data-meal="dinner" data-price="80">
+        <span class="meal-emoji">🌙</span>
+        <span class="meal-name-hi">रात्रि</span>
+        <span class="meal-name-en">Dinner</span>
+        <span class="meal-price">₹80/person</span>
+        <span class="meal-qty-info">3 रोटी + हल्की दाल / रायता</span>
+        <span class="seasonal">🌿 As per season</span>
+      </div>
+
+      <div class="meal-card" onclick="toggleMeal(this,'custom')" data-meal="custom" data-price="0">
+        <span class="meal-emoji">✨</span>
+        <span class="meal-name-hi">कस्टम</span>
+        <span class="meal-name-en">Custom Order</span>
+        <span class="meal-price">Price on request</span>
+        <span class="meal-qty-info">अपनी पसंद बताएं</span>
+        <span class="seasonal">📞 We'll call you</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quantity -->
+  <div class="card">
+    <div class="card-title">👥 कितने लोगों के लिए · How Many People</div>
+    <div class="qty-row">
+      <div>
+        <div class="qty-label">Persons / व्यक्ति</div>
+        <span class="qty-sub">Min. 2 persons per delivery</span>
+      </div>
+      <div class="stepper">
+        <button onclick="changeQty(-1)">−</button>
+        <input type="number" id="qtyInput" value="2" min="2" max="20" readonly>
+        <button onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <div class="min-warn" id="minWarn">⚠️ Minimum 2 persons required for delivery. Minimum order: ₹120</div>
+  </div>
+
+  <!-- Delivery date -->
+  <div class="card">
+    <div class="card-title">📅 डिलीवरी · Delivery Date & Time</div>
+    <div class="field">
+      <label>Delivery Date / तारीख <span>*</span></label>
+      <input type="date" id="delivDate" min="">
+    </div>
+    <div class="field">
+      <label>Preferred Time Slot / समय</label>
+      <div class="slot-grid">
+        <div class="slot" onclick="selectSlot(this,'7–9 AM')">🌅 7–9 AM<br><span style="font-size:.55rem;color:var(--muted)">नाश्ता</span></div>
+        <div class="slot" onclick="selectSlot(this,'12–2 PM')">☀️ 12–2 PM<br><span style="font-size:.55rem;color:var(--muted)">दोपहर</span></div>
+        <div class="slot" onclick="selectSlot(this,'7–9 PM')">🌙 7–9 PM<br><span style="font-size:.55rem;color:var(--muted)">रात्रि</span></div>
+        <div class="slot" onclick="selectSlot(this,'9–11 AM')">🕘 9–11 AM</div>
+        <div class="slot" onclick="selectSlot(this,'2–4 PM')">🕑 2–4 PM</div>
+        <div class="slot" onclick="selectSlot(this,'Any Time')">🔔 Any Time</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="goToStep2()">अगला · Next →</button>
+</div>
+
+<!-- ═══ SECTION 2: DELIVERY DETAILS ═══ -->
+<div class="section" id="sec2">
+  <div class="card">
+    <div class="card-title">👤 आपकी जानकारी · Your Details</div>
+    <div class="field" id="f-name">
+      <label>नाम / Name <span>*</span></label>
+      <input type="text" id="custName" placeholder="आपका पूरा नाम / Your full name">
+      <div class="error-msg">Please enter your name</div>
+    </div>
+    <div class="field" id="f-phone">
+      <label>WhatsApp Number <span>*</span></label>
+      <input type="tel" id="custPhone" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric">
+      <div class="error-msg">Please enter a valid 10-digit number</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🛵 डिलीवरी पता · Delivery Address</div>
+    <div class="note">📍 हम मुरादाबाद में 5 km के अंदर डिलीवरी करते हैं · We deliver within 5 km in Moradabad</div>
+    <div class="field" id="f-addr">
+      <label>पूरा पता / Full Address <span>*</span></label>
+      <textarea id="custAddr" placeholder="मकान नंबर, गली, मोहल्ला, मुरादाबाद&#10;House no, Street, Area, Moradabad"></textarea>
+      <div class="error-msg">Please enter your delivery address</div>
+    </div>
+    <div class="field">
+      <label>Landmark (optional)</label>
+      <input type="text" id="custLandmark" placeholder="नज़दीकी दुकान / मंदिर / स्कूल का नाम">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 विशेष निर्देश · Special Instructions</div>
+    <div class="field">
+      <label>कोई खास बात? (optional)</label>
+      <textarea id="custNote" placeholder="जैसे: कम मसाला, बिना प्याज़-लहसुन, extra roti आदि&#10;e.g. Less spicy, no onion-garlic, extra roti etc." style="min-height:60px;"></textarea>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="goToStep3()">भुगतान · Proceed to Payment →</button>
+  <button class="btn-secondary" onclick="goBack(1)">← वापस · Back</button>
+</div>
+
+<!-- ═══ SECTION 3: PAYMENT ═══ -->
+<div class="section" id="sec3">
+
+  <!-- Order summary -->
+  <div class="card">
+    <div class="card-title">🧾 ऑर्डर सारांश · Order Summary</div>
+    <div class="summary-box" id="summaryBox">
+      <!-- filled by JS -->
+    </div>
+    <div class="min-order-note">
+      ⚡ Full advance payment required to confirm order · ऑर्डर कन्फर्म करने के लिए पूरा भुगतान ज़रूरी है
+    </div>
+  </div>
+
+  <!-- Payment method -->
+  <div class="card">
+    <div class="card-title">💳 भुगतान का तरीका · Payment Method</div>
+    <div class="pay-method-grid">
+      <div class="pay-opt selected" onclick="selectPay(this,'upi')" data-pay="upi">
+        <span class="pay-icon">📱</span>
+        <span class="pay-name">UPI / QR</span>
+        <span class="pay-sub">GPay, PhonePe, Paytm</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this,'cash')" data-pay="cash">
+        <span class="pay-icon">💵</span>
+        <span class="pay-name">नकद · Cash</span>
+        <span class="pay-sub">On delivery</span>
+      </div>
+    </div>
+
+    <!-- UPI PAYMENT BOX -->
+    <div id="upiBox" class="upi-box">
+      <div class="upi-title">📲 नीचे QR स्कैन करें या UPI ID से भुगतान करें</div>
+      <div class="pay-apps">
+        <div class="pay-app"><span class="pay-app-icon">🟢</span>PhonePe</div>
+        <div class="pay-app"><span class="pay-app-icon">🔵</span>GPay</div>
+        <div class="pay-app"><span class="pay-app-icon">🔷</span>Paytm</div>
+        <div class="pay-app"><span class="pay-app-icon">🏦</span>Any UPI</div>
+      </div>
+      <div class="upi-qr-wrap">
+        <img id="upiQrImg" src="" alt="UPI QR Code">
+        <div class="qr-label">Scan to Pay · UPI QR</div>
+      </div>
+      <div class="upi-id-box">
+        <div class="upi-id" id="upiIdShow">8418962142@upi</div>
+        <div class="upi-name">Shri Jee Tifin Seva · श्री जी टिफिन सेवा</div>
+      </div>
+      <button class="copy-btn" onclick="copyUPI()">📋 UPI ID Copy करें</button>
+
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()" id="uploadArea">
+        <span class="upload-icon">📸</span>
+        <div class="upload-text">
+          <strong>Payment Screenshot Upload करें</strong>
+          भुगतान के बाद screenshot यहाँ upload करें<br>
+          <span style="font-size:.6rem;color:#9ca3af;">JPG, PNG · Max 5MB</span>
+        </div>
+        <img class="upload-preview" id="uploadPreview">
+      </div>
+      <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(this)">
+
+      <div class="txnid-row">
+        <div class="field">
+          <label>Transaction ID / UTR Number (optional)</label>
+          <input type="text" id="txnId" placeholder="12-digit UTR or Transaction ID" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+
+    <!-- CASH BOX -->
+    <div id="cashBox" class="cash-box" style="display:none;">
+      <span class="cash-icon">💵</span>
+      <p>
+        <strong>नकद भुगतान — Cash on Delivery</strong><br>
+        डिलीवरी के समय भुगतान करें<br>
+        Please keep exact change ready<br><br>
+        <strong>Minimum Order: ₹120</strong>
+      </p>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="submitOrder()">✅ ऑर्डर WhatsApp पर भेजें · Send Order</button>
+  <button class="btn-secondary" onclick="goBack(2)">← वापस · Back</button>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="successScreen">
+  <span class="success-icon">🎉</span>
+  <h2>ऑर्डर हो गया!<br>Order Placed!</h2>
+  <p>आपका ऑर्डर WhatsApp पर भेज दिया गया है।<br>
+  हम जल्द ही confirm करेंगे। 🙏<br><br>
+  Your order has been sent to WhatsApp.<br>We will confirm shortly.</p>
+  <div class="order-id-box">
+    <span class="oid-lbl">Order ID</span>
+    <span class="oid-val" id="orderIdDisplay">#SJT-000</span>
+  </div>
+  <button class="wa-confirm-btn" id="waConfirmBtn">
+    💬 WhatsApp खोलें · Open WhatsApp to Confirm
+  </button>
+  <p style="margin-top:16px;font-size:.65rem;color:#d8b4fe;">
+    📞 सहायता के लिए कॉल करें:<br>
+    <strong style="color:var(--gold);">8418962142 / 8630198366</strong>
+  </p>
+</div>
+
+<div class="form-footer">Shri Jee Tifin Seva · Moradabad · 🦚</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+var state = {
+  plan: 'daily',
+  meals: [],
+  qty: 2,
+  slot: '',
+  delivDate: '',
+  payMethod: 'upi',
+  screenshotB64: '',
+  screenshotName: '',
+  txnId: ''
+};
+
+var PRICES = { breakfast: 65, lunch: 90, dinner: 80, custom: 0 };
+var MIN_ORDER = 120;
+var WA_NUMBER = '918418962142';
+
+// UPI QR — embedded base64 (will be replaced by actual QR)
+document.getElementById('upiQrImg').src = 'data:image/png;base64,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';
+
+// Set min delivery date = tomorrow
+(function(){
+  var d = new Date(); d.setDate(d.getDate()+1);
+  var s = d.toISOString().split('T')[0];
+  document.getElementById('delivDate').min = s;
+  document.getElementById('delivDate').value = s;
+  state.delivDate = s;
+})();
+
+// ── PLAN ──────────────────────────────────────────────
+function selectPlan(el, plan) {
+  document.querySelectorAll('.plan-opt').forEach(function(e){ e.classList.remove('selected'); });
+  el.classList.add('selected');
+  state.plan = plan;
+}
+
+// ── MEALS ─────────────────────────────────────────────
+function toggleMeal(el, meal) {
+  el.classList.toggle('selected');
+  var idx = state.meals.indexOf(meal);
+  if (idx > -1) state.meals.splice(idx,1);
+  else state.meals.push(meal);
+}
+
+// ── QTY ───────────────────────────────────────────────
+function changeQty(delta) {
+  var v = parseInt(document.getElementById('qtyInput').value) + delta;
+  if (v < 1) v = 1;
+  if (v > 20) v = 20;
+  document.getElementById('qtyInput').value = v;
+  state.qty = v;
+  document.getElementById('minWarn').style.display = v < 2 ? 'block' : 'none';
+}
+
+// ── SLOT ──────────────────────────────────────────────
+function selectSlot(el, slot) {
+  document.querySelectorAll('.slot').forEach(function(e){ e.classList.remove('selected'); });
+  el.classList.add('selected');
+  state.slot = slot;
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+function setStep(n) {
+  for (var i=1; i<=4; i++) {
+    var st = document.getElementById('step'+i);
+    st.classList.remove('active','done');
+    if (i < n) st.classList.add('done');
+    if (i === n) st.classList.add('active');
+    document.getElementById('sec'+i) && (document.getElementById('sec'+i).classList.remove('active'));
+  }
+  var sec = document.getElementById('sec'+n);
+  if (sec) sec.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goToStep2() {
+  if (state.meals.length === 0) { alert('कृपया कम से कम एक meal चुनें।\nPlease select at least one meal.'); return; }
+  state.qty = parseInt(document.getElementById('qtyInput').value);
+  if (state.qty < 2) { alert('Minimum 2 persons required.'); return; }
+  state.delivDate = document.getElementById('delivDate').value;
+  if (!state.delivDate) { alert('Please select delivery date.'); return; }
+  setStep(2);
+}
+
+function goToStep3() {
+  var name = document.getElementById('custName').value.trim();
+  var phone = document.getElementById('custPhone').value.trim();
+  var addr = document.getElementById('custAddr').value.trim();
+  var ok = true;
+  if (!name) { document.getElementById('f-name').classList.add('error'); ok=false; }
+  else document.getElementById('f-name').classList.remove('error');
+  if (!phone || phone.length !== 10) { document.getElementById('f-phone').classList.add('error'); ok=false; }
+  else document.getElementById('f-phone').classList.remove('error');
+  if (!addr) { document.getElementById('f-addr').classList.add('error'); ok=false; }
+  else document.getElementById('f-addr').classList.remove('error');
+  if (!ok) { window.scrollTo({top:0,behavior:'smooth'}); return; }
+  buildSummary();
+  setStep(3);
+}
+
+function goBack(n) { setStep(n); }
+
+// ── ORDER SUMMARY ─────────────────────────────────────
+function calcTotal() {
+  var total = 0;
+  state.meals.forEach(function(m){ total += (PRICES[m]||0) * state.qty; });
+  if (state.plan === 'monthly') total = total * 26 * 0.9; // 26 working days, 10% off
+  return Math.round(total);
+}
+
+function buildSummary() {
+  var total = calcTotal();
+  var mealNames = { breakfast:'नाश्ता (Breakfast)', lunch:'दोपहर (Lunch)', dinner:'रात्रि (Dinner)', custom:'Custom Order' };
+  var rows = '';
+  state.meals.forEach(function(m){
+    var p = state.plan === 'monthly' ? Math.round(PRICES[m]*26*0.9) : PRICES[m]*state.qty;
+    rows += '<div class="summary-row"><span class="sl">'+mealNames[m]+'</span><span class="sv">'+state.qty+' person × ₹'+(PRICES[m]||0)+' = ₹'+p+'</span></div>';
+  });
+  rows += '<div class="summary-row"><span class="sl">Plan</span><span class="sv">'+(state.plan==='monthly'?'Monthly Pack (26 days, 10% off)':'Daily Order')+'</span></div>';
+  rows += '<div class="summary-row"><span class="sl">Delivery Date</span><span class="sv">'+state.delivDate+(state.slot?' · '+state.slot:'')+'</span></div>';
+  document.getElementById('summaryBox').innerHTML = rows +
+    '<div class="summary-total"><span>कुल · Total</span><span>₹'+total+'</span></div>';
+}
+
+// ── PAYMENT ───────────────────────────────────────────
+function selectPay(el, method) {
+  document.querySelectorAll('.pay-opt').forEach(function(e){ e.classList.remove('selected'); });
+  el.classList.add('selected');
+  state.payMethod = method;
+  document.getElementById('upiBox').style.display = method==='upi' ? 'block' : 'none';
+  document.getElementById('cashBox').style.display = method==='cash' ? 'block' : 'none';
+}
+
+function copyUPI() {
+  var id = '8418962142@upi';
+  if (navigator.clipboard) navigator.clipboard.writeText(id);
+  alert('UPI ID copied: '+id);
+}
+
+function handleUpload(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    state.screenshotB64 = e.target.result;
+    state.screenshotName = file.name;
+    document.getElementById('uploadPreview').src = e.target.result;
+    document.getElementById('uploadPreview').style.display = 'block';
+    document.getElementById('uploadArea').classList.add('has-file');
+    document.querySelector('#uploadArea .upload-text strong').textContent = '✅ Screenshot uploaded!';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── SUBMIT ────────────────────────────────────────────
+function submitOrder() {
+  if (state.payMethod === 'upi' && !state.screenshotB64 && !document.getElementById('txnId').value.trim()) {
+    if (!confirm('आपने screenshot या Transaction ID नहीं दी।\nबिना इसके ऑर्डर कन्फर्म होने में देरी हो सकती है।\nफिर भी भेजें?')) return;
+  }
+  state.txnId = document.getElementById('txnId').value.trim();
+  var orderId = '#SJT-' + Date.now().toString().slice(-5);
+  document.getElementById('orderIdDisplay').textContent = orderId;
+
+  var mealNames = { breakfast:'नाश्ता', lunch:'दोपहर', dinner:'रात्रि', custom:'Custom' };
+  var mealList = state.meals.map(function(m){ return mealNames[m]; }).join(', ');
+  var total = calcTotal();
+  var name = document.getElementById('custName').value.trim();
+  var phone = document.getElementById('custPhone').value.trim();
+  var addr = document.getElementById('custAddr').value.trim();
+  var landmark = document.getElementById('custLandmark').value.trim();
+  var note = document.getElementById('custNote').value.trim();
+
+  var msg = '🦚 *नया ऑर्डर · New Order*\n';
+  msg += '━━━━━━━━━━━━━━━━━━━━\n';
+  msg += '🆔 Order ID: ' + orderId + '\n';
+  msg += '👤 नाम: ' + name + '\n';
+  msg += '📞 Phone: ' + phone + '\n';
+  msg += '📍 Address: ' + addr + (landmark ? ' (' + landmark + ')' : '') + '\n';
+  msg += '━━━━━━━━━━━━━━━━━━━━\n';
+  msg += '🍽️ Meals: ' + mealList + '\n';
+  msg += '👥 Persons: ' + state.qty + '\n';
+  msg += '📅 Plan: ' + (state.plan==='monthly'?'Monthly Pack':'Daily') + '\n';
+  msg += '🕐 Slot: ' + (state.slot||'Not specified') + '\n';
+  msg += '📆 Date: ' + state.delivDate + '\n';
+  msg += '━━━━━━━━━━━━━━━━━━━━\n';
+  msg += '💰 Total: ₹' + total + '\n';
+  msg += '💳 Payment: ' + (state.payMethod==='upi'?'UPI':'Cash on Delivery') + '\n';
+  if (state.txnId) msg += '🔢 TxnID/UTR: ' + state.txnId + '\n';
+  if (state.payMethod==='upi' && state.screenshotB64) msg += '📸 Screenshot: Attached below\n';
+  if (note) msg += '📝 Note: ' + note + '\n';
+  msg += '━━━━━━━━━━━━━━━━━━━━\n';
+  msg += '🙏 Shri Jee Tifin Seva · Moradabad';
+
+  var waUrl = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+  document.getElementById('waConfirmBtn').onclick = function(){ window.open(waUrl,'_blank'); };
+
+  // Hide all sections, show success
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('successScreen').style.display = 'block';
+  for (var i=1;i<=3;i++) { var st=document.getElementById('step'+i); st.classList.remove('active'); st.classList.add('done'); }
+  document.getElementById('step4').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
