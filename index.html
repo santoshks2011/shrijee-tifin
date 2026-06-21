@@ -2,63 +2,390 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>श्री जी टिफिन सेवा — ऑर्डर करें</title>
-<meta name="description" content="Shri Jee Tifin Seva - Order via WhatsApp">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
-  background:linear-gradient(160deg,#3b0764 0%,#1c0533 60%,#0f1422 100%);
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:24px;text-align:center;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --violet:#3b0764;--plum:#6b21a8;--gold:#fbbf24;--lotus:#f472b6;
+  --teal:#0f766e;--cream:#fdf4e7;--green:#16a34a;--text:#1c1917;
+  --card:#fff;--border:#e5e7eb;--muted:#6b7280;
 }
-.peacock{font-size:60px;filter:drop-shadow(0 0 16px rgba(251,191,36,.6));animation:bob 2s ease-in-out infinite;}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-h1{color:#fbbf24;font-size:28px;font-weight:900;margin-top:12px;text-shadow:0 0 18px rgba(251,191,36,.4);}
-.sub{color:#f472b6;font-size:14px;font-style:italic;margin-top:4px;}
-.tag{color:#d8b4fe;font-size:12px;margin-top:10px;}
-.loader{margin:28px 0;width:44px;height:44px;border:4px solid rgba(251,191,36,.2);border-top-color:#fbbf24;border-radius:50%;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.msg{color:#86efac;font-size:14px;font-weight:600;}
-.wa-btn{
-  margin-top:24px;background:#25D366;color:#fff;text-decoration:none;
-  padding:15px 36px;border-radius:12px;font-size:17px;font-weight:800;
-  display:inline-flex;align-items:center;gap:10px;
-  box-shadow:0 6px 20px rgba(37,211,102,.4);
-}
-.wa-icon{font-size:22px;}
-.hint{color:#a7f3d0;font-size:12px;margin-top:16px;line-height:1.6;}
-.num{color:#fff;font-weight:900;font-size:18px;margin-top:20px;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:linear-gradient(165deg,#2d0a4e 0%,#1a0533 45%,#0f172a 100%);min-height:100vh;color:var(--text);}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#3b0764,#6b21a8,#4c1d95);padding:20px 18px 16px;text-align:center;position:relative;overflow:hidden;}
+.hero::after{content:'🪷';position:absolute;right:-8px;bottom:-12px;font-size:90px;opacity:.06;}
+.hero-ico{font-size:34px;filter:drop-shadow(0 0 12px rgba(251,191,36,.6));}
+.hero h1{font-size:24px;color:var(--gold);text-shadow:0 0 18px rgba(251,191,36,.4);line-height:1.1;margin-top:2px;}
+.hero .en{font-size:12px;color:var(--lotus);font-style:italic;}
+.hero .tag{font-size:11px;color:#d8b4fe;margin-top:6px;}
+
+/* PROGRESS */
+.progress{display:flex;gap:4px;padding:12px 18px;background:rgba(0,0,0,.25);}
+.pdot{flex:1;height:4px;border-radius:2px;background:rgba(251,191,36,.2);transition:background .3s;}
+.pdot.done{background:var(--gold);}
+
+/* STEP */
+.step{display:none;padding:18px;animation:fade .3s ease;}
+.step.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.q-title{color:#fff;font-size:18px;font-weight:800;margin-bottom:4px;text-align:center;}
+.q-sub{color:#c4b5fd;font-size:12px;text-align:center;margin-bottom:18px;}
+
+/* OPTION BUTTONS */
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;text-align:left;width:100%;font-family:inherit;}
+.opt:active{transform:scale(.98);}
+.opt.sel{border-color:var(--plum);background:#f3e8ff;}
+.opt-ico{font-size:28px;flex-shrink:0;}
+.opt-body{flex:1;}
+.opt-title{font-size:16px;font-weight:800;color:var(--text);display:block;}
+.opt-desc{font-size:12px;color:var(--muted);display:block;margin-top:2px;line-height:1.4;}
+.opt-price{font-size:16px;font-weight:900;color:var(--plum);flex-shrink:0;}
+.opt.sel .opt-check{display:block;}
+.opt-check{display:none;color:var(--plum);font-size:18px;font-weight:900;}
+
+/* GRID OPTS */
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt-sm{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;}
+.opt-sm:active{transform:scale(.97);}
+.opt-sm.sel{border-color:var(--plum);background:#f3e8ff;}
+.opt-sm-ico{font-size:24px;display:block;}
+.opt-sm-title{font-size:13px;font-weight:700;color:var(--text);display:block;margin-top:4px;}
+.opt-sm-desc{font-size:10px;color:var(--muted);display:block;}
+
+/* STEPPER */
+.stepper{display:flex;align-items:center;justify-content:center;gap:0;margin:10px 0;}
+.stepper button{width:54px;height:54px;border:none;background:#f3e8ff;color:var(--plum);font-size:26px;font-weight:700;cursor:pointer;}
+.stepper button:first-child{border-radius:12px 0 0 12px;}
+.stepper button:last-child{border-radius:0 12px 12px 0;}
+.stepper .val{width:70px;height:54px;background:#fff;border:2px solid #e9d5ff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:var(--text);}
+
+/* INPUTS */
+.field{margin-bottom:14px;}
+.field label{display:block;color:#fff;font-size:13px;font-weight:600;margin-bottom:6px;}
+.field input,.field textarea{width:100%;padding:13px;border:2px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit;background:#fff;outline:none;}
+.field input:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{min-height:70px;resize:vertical;}
+
+/* NAV BUTTONS */
+.nav{display:flex;gap:10px;margin-top:20px;}
+.btn{flex:1;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn:active{transform:scale(.98);}
+.btn-next{background:linear-gradient(90deg,#6b21a8,#9333ea);color:#fff;box-shadow:0 4px 16px rgba(107,33,168,.4);}
+.btn-back{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);flex:0 0 90px;}
+.btn-wa{background:#25D366;color:#fff;box-shadow:0 4px 16px rgba(37,211,102,.4);font-size:17px;}
+.btn:disabled{opacity:.4;}
+
+/* SUMMARY */
+.summary{background:rgba(255,255,255,.95);border-radius:14px;padding:16px;margin-bottom:16px;}
+.sum-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed #ddd;font-size:14px;}
+.sum-row:last-child{border-bottom:none;}
+.sum-k{color:var(--muted);}
+.sum-v{font-weight:700;color:var(--text);text-align:right;}
+.sum-total{background:var(--plum);color:#fff;border-radius:10px;padding:12px;display:flex;justify-content:space-between;font-size:18px;font-weight:900;margin-top:10px;}
+
+/* PAY INFO */
+.pay-box{background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:14px;text-align:center;margin-bottom:14px;}
+.pay-upi{font-size:18px;font-weight:900;color:var(--text);letter-spacing:.5px;margin:6px 0;}
+.pay-note{font-size:12px;color:var(--muted);}
+.pay-name{font-size:13px;color:var(--green);font-weight:700;}
+
+.note{background:rgba(251,191,36,.12);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 12px;font-size:12px;color:#fde68a;margin-top:14px;line-height:1.6;}
+.foot{text-align:center;padding:14px;color:rgba(255,255,255,.4);font-size:11px;}
 </style>
 </head>
 <body>
-  <div class="peacock">🦚</div>
-  <h1>श्री जी टिफिन सेवा</h1>
-  <div class="sub">Shri Jee Tifin Seva</div>
-  <div class="tag">घर जैसा स्वाद, सेहत के साथ ❤️</div>
 
-  <div class="loader" id="loader"></div>
-  <div class="msg" id="msg">WhatsApp खोल रहे हैं... · Opening WhatsApp...</div>
+<div class="hero">
+  <div class="hero-ico">🦚</div>
+  <h1 id="brandName">श्री जी टिफिन सेवा</h1>
+  <div class="en">Shri Jee Tifin Seva</div>
+  <div class="tag" id="brandTag">घर जैसा स्वाद, सेहत के साथ ❤️</div>
+</div>
 
-  <a href="https://wa.me/918418962142?text=%F0%9F%A6%9A%20%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A5%80%20%E0%A4%9C%E0%A5%80%20%E0%A4%9F%E0%A4%BF%E0%A4%AB%E0%A4%BF%E0%A4%A8%20%E0%A4%B8%E0%A5%87%E0%A4%B5%E0%A4%BE%20%E2%80%94%20%E0%A4%A8%E0%A4%AF%E0%A4%BE%20%E0%A4%91%E0%A4%B0%E0%A5%8D%E0%A4%A1%E0%A4%B0%0A(Shri%20Jee%20Tifin%20Seva%20%E2%80%94%20New%20Order)%0A%0A%E0%A4%95%E0%A5%83%E0%A4%AA%E0%A4%AF%E0%A4%BE%20%E0%A4%A8%E0%A5%80%E0%A4%9A%E0%A5%87%20%E0%A4%AD%E0%A4%B0%E0%A4%95%E0%A4%B0%20%E0%A4%AD%E0%A5%87%E0%A4%9C%E0%A5%87%E0%A4%82%20%F0%9F%91%87%0APlease%20fill%20%26%20send%20below%20%F0%9F%91%87%0A%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%8C%90%20%E0%A4%AD%E0%A4%BE%E0%A4%B7%E0%A4%BE%2FLanguage%3A%20%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A5%80%20%2F%20English%0A%0A%F0%9F%91%A4%20%E0%A4%A8%E0%A4%BE%E0%A4%AE%2FName%3A%20%0A%F0%9F%93%9E%20%E0%A4%AE%E0%A5%8B%E0%A4%AC%E0%A4%BE%E0%A4%87%E0%A4%B2%2FMobile%3A%20%0A%F0%9F%93%8D%20%E0%A4%AA%E0%A4%A4%E0%A4%BE%2FAddress%3A%20%0A%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%8D%BD%EF%B8%8F%20%E0%A4%95%E0%A5%8D%E0%A4%AF%E0%A4%BE%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F%3F%20(%E2%9C%85%20%E0%A4%B2%E0%A4%97%E0%A4%BE%E0%A4%8F%E0%A4%82)%0A%0A%F0%9F%8C%85%20%E0%A4%A8%E0%A4%BE%E0%A4%B6%E0%A5%8D%E0%A4%A4%E0%A4%BE%2FBreakfast%20(%E2%82%B960-70)%0A%E2%98%80%EF%B8%8F%20%E0%A4%A6%E0%A5%8B%E0%A4%AA%E0%A4%B9%E0%A4%B0%2FLunch%20(%E2%82%B970)%0A%F0%9F%8C%99%20%E0%A4%B0%E0%A4%BE%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%BF%2FDinner%20(%E2%82%B970)%0A%0A%F0%9F%91%A5%20%E0%A4%95%E0%A4%BF%E0%A4%A4%E0%A4%A8%E0%A5%87%20%E0%A4%B2%E0%A5%8B%E0%A4%97%E0%A5%8B%E0%A4%82%20%E0%A4%95%E0%A5%87%20%E0%A4%B2%E0%A4%BF%E0%A4%8F%2FFor%20how%20many%3A%20%0A%F0%9F%93%85%20%E0%A4%A4%E0%A4%BE%E0%A4%B0%E0%A5%80%E0%A4%96%2FDate%3A%20%0A%F0%9F%95%90%20%E0%A4%B8%E0%A4%AE%E0%A4%AF%2FTime%3A%20%0A%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%92%B3%20%E0%A4%AD%E0%A5%81%E0%A4%97%E0%A4%A4%E0%A4%BE%E0%A4%A8%2FPayment%3A%20UPI%20%2F%20Cash%0A%F0%9F%93%A6%20%E0%A4%AE%E0%A4%BE%E0%A4%B8%E0%A4%BF%E0%A4%95%20%E0%A4%AA%E0%A5%88%E0%A4%95%3F%2010%25%20%E0%A4%9B%E0%A5%82%E0%A4%9F%3A%20%E0%A4%B9%E0%A4%BE%E0%A4%81%2F%E0%A4%A8%E0%A4%B9%E0%A5%80%E0%A4%82%0A%0A%F0%9F%99%8F%20%E0%A4%A7%E0%A4%A8%E0%A5%8D%E0%A4%AF%E0%A4%B5%E0%A4%BE%E0%A4%A6!" class="wa-btn" id="waBtn">
-    <span class="wa-icon">💬</span> WhatsApp पर ऑर्डर करें
-  </a>
+<div class="progress">
+  <div class="pdot done" id="p1"></div>
+  <div class="pdot" id="p2"></div>
+  <div class="pdot" id="p3"></div>
+  <div class="pdot" id="p4"></div>
+  <div class="pdot" id="p5"></div>
+  <div class="pdot" id="p6"></div>
+</div>
 
-  <div class="hint">
-    अगर WhatsApp अपने आप न खुले,<br>
-    तो ऊपर बटन दबाएं 👆<br>
-    <span style="color:#6ee7b7;">If WhatsApp doesn't open, tap the button</span>
+<!-- STEP 1: LANGUAGE -->
+<div class="step active" id="s1">
+  <div class="q-title">भाषा चुनें / Choose Language</div>
+  <div class="q-sub">आगे बढ़ने के लिए चुनें · Tap to continue</div>
+  <div class="opts">
+    <button class="opt" onclick="setLang('hi',this)">
+      <span class="opt-ico">🇮🇳</span>
+      <span class="opt-body"><span class="opt-title">हिंदी</span><span class="opt-desc">हिंदी में ऑर्डर करें</span></span>
+      <span class="opt-check">✓</span>
+    </button>
+    <button class="opt" onclick="setLang('en',this)">
+      <span class="opt-ico">🌐</span>
+      <span class="opt-body"><span class="opt-title">English</span><span class="opt-desc">Order in English</span></span>
+      <span class="opt-check">✓</span>
+    </button>
+  </div>
+</div>
+
+<!-- STEP 2: MEAL -->
+<div class="step" id="s2">
+  <div class="q-title" data-hi="क्या खाना है?" data-en="What would you like?">क्या खाना है?</div>
+  <div class="q-sub" data-hi="एक या ज़्यादा चुन सकते हैं" data-en="Select one or more">एक या ज़्यादा चुन सकते हैं</div>
+  <div class="opts">
+    <button class="opt" onclick="toggleMeal('breakfast',this)">
+      <span class="opt-ico">🌅</span>
+      <span class="opt-body"><span class="opt-title" data-hi="नाश्ता" data-en="Breakfast">नाश्ता</span><span class="opt-desc" data-hi="परांठा/पोहा/जवे/इडली + चटनी/दही" data-en="Paratha/Poha/Jve/Idli + sides">परांठा/पोहा/जवे/इडली + चटनी/दही</span></span>
+      <span class="opt-price">₹60–70</span>
+    </button>
+    <button class="opt" onclick="toggleMeal('lunch',this)">
+      <span class="opt-ico">☀️</span>
+      <span class="opt-body"><span class="opt-title" data-hi="दोपहर" data-en="Lunch">दोपहर</span><span class="opt-desc" data-hi="4 चपाती+चावल+दाल+सलाद+सब्जी" data-en="4 Chapati+Rice+Dal+Salad+Sabzi">4 चपाती+चावल+दाल+सलाद+सब्जी</span></span>
+      <span class="opt-price">₹70</span>
+    </button>
+    <button class="opt" onclick="toggleMeal('dinner',this)">
+      <span class="opt-ico">🌙</span>
+      <span class="opt-body"><span class="opt-title" data-hi="रात्रि" data-en="Dinner">रात्रि</span><span class="opt-desc" data-hi="ताज़ा बना · हल्का भोजन" data-en="Freshly made · light meal">ताज़ा बना · हल्का भोजन</span></span>
+      <span class="opt-price">₹70</span>
+    </button>
+  </div>
+  <div class="note" data-hi="🌿 मौसमी सब्जियाँ · शुक्रवार: पनीर/खीर विशेष" data-en="🌿 Seasonal vegetables · Friday: Paneer/Kheer special">🌿 मौसमी सब्जियाँ · शुक्रवार: पनीर/खीर विशेष</div>
+  <div class="nav">
+    <button class="btn btn-back" onclick="goStep(1)" data-hi="वापस" data-en="Back">वापस</button>
+    <button class="btn btn-next" onclick="validateMeal()" data-hi="आगे →" data-en="Next →">आगे →</button>
+  </div>
+</div>
+
+<!-- STEP 3: PERSONS + PLAN -->
+<div class="step" id="s3">
+  <div class="q-title" data-hi="कितने लोगों के लिए?" data-en="For how many people?">कितने लोगों के लिए?</div>
+  <div class="q-sub" data-hi="व्यक्तियों की संख्या" data-en="Number of persons">व्यक्तियों की संख्या</div>
+  <div class="stepper">
+    <button onclick="changeQty(-1)">−</button>
+    <div class="val" id="qtyVal">1</div>
+    <button onclick="changeQty(1)">+</button>
+  </div>
+  <div class="q-sub" style="margin-top:18px;" data-hi="ऑर्डर का प्रकार" data-en="Order type">ऑर्डर का प्रकार</div>
+  <div class="opts-grid" style="grid-template-columns:1fr 1fr 1fr;">
+    <button class="opt-sm sel" onclick="setPlan('today',this)">
+      <span class="opt-sm-ico">🍱</span>
+      <span class="opt-sm-title" data-hi="आज का" data-en="Today">आज का</span>
+      <span class="opt-sm-desc" data-hi="एक बार" data-en="One-time">एक बार</span>
+    </button>
+    <button class="opt-sm" onclick="setPlan('ondemand',this)">
+      <span class="opt-sm-ico">🔔</span>
+      <span class="opt-sm-title" data-hi="ज़रूरत पर" data-en="When needed">ज़रूरत पर</span>
+      <span class="opt-sm-desc" data-hi="कभी-कभी" data-en="Occasional">कभी-कभी</span>
+    </button>
+    <button class="opt-sm" onclick="setPlan('monthly',this)">
+      <span class="opt-sm-ico">📅</span>
+      <span class="opt-sm-title" data-hi="मासिक पैक" data-en="Monthly">मासिक पैक</span>
+      <span class="opt-sm-desc" data-hi="10% छूट" data-en="10% off">10% छूट</span>
+    </button>
+  </div>
+  <div class="nav">
+    <button class="btn btn-back" onclick="goStep(2)" data-hi="वापस" data-en="Back">वापस</button>
+    <button class="btn btn-next" onclick="goStep(4)" data-hi="आगे →" data-en="Next →">आगे →</button>
+  </div>
+</div>
+
+<!-- STEP 4: DATE/TIME -->
+<div class="step" id="s4">
+  <div class="q-title" data-hi="कब चाहिए?" data-en="When do you need it?">कब चाहिए?</div>
+  <div class="q-sub" data-hi="तारीख और समय" data-en="Date and time">तारीख और समय</div>
+  <div class="field">
+    <label data-hi="📅 तारीख" data-en="📅 Date">📅 तारीख</label>
+    <input type="date" id="fDate">
+  </div>
+  <div class="q-sub" style="text-align:left;margin-bottom:8px;" data-hi="🕐 समय चुनें" data-en="🕐 Choose time">🕐 समय चुनें</div>
+  <div class="opts-grid" id="timeSlots">
+    <button class="opt-sm" onclick="setSlot('सुबह 7–9 / Morning 7–9',this)"><span class="opt-sm-ico">🌅</span><span class="opt-sm-title">7–9 AM</span></button>
+    <button class="opt-sm" onclick="setSlot('दोपहर 12–2 / Noon 12–2',this)"><span class="opt-sm-ico">☀️</span><span class="opt-sm-title">12–2 PM</span></button>
+    <button class="opt-sm" onclick="setSlot('शाम 7–9 / Eve 7–9',this)"><span class="opt-sm-ico">🌙</span><span class="opt-sm-title">7–9 PM</span></button>
+    <button class="opt-sm" onclick="setSlot('कभी भी / Anytime',this)"><span class="opt-sm-ico">🔔</span><span class="opt-sm-title" data-hi="कभी भी" data-en="Anytime">कभी भी</span></button>
+  </div>
+  <div class="nav">
+    <button class="btn btn-back" onclick="goStep(3)" data-hi="वापस" data-en="Back">वापस</button>
+    <button class="btn btn-next" onclick="goStep(5)" data-hi="आगे →" data-en="Next →">आगे →</button>
+  </div>
+</div>
+
+<!-- STEP 5: DETAILS -->
+<div class="step" id="s5">
+  <div class="q-title" data-hi="आपकी जानकारी" data-en="Your details">आपकी जानकारी</div>
+  <div class="q-sub" data-hi="डिलीवरी के लिए" data-en="For delivery">डिलीवरी के लिए</div>
+  <div class="field">
+    <label data-hi="👤 नाम" data-en="👤 Name">👤 नाम</label>
+    <input type="text" id="fName" data-ph-hi="आपका नाम" data-ph-en="Your name" placeholder="आपका नाम">
+  </div>
+  <div class="field">
+    <label data-hi="📞 मोबाइल नंबर" data-en="📞 Mobile number">📞 मोबाइल नंबर</label>
+    <input type="tel" id="fPhone" maxlength="10" inputmode="numeric" data-ph-hi="10 अंक का नंबर" data-ph-en="10-digit number" placeholder="10 अंक का नंबर">
+  </div>
+  <div class="field">
+    <label data-hi="📍 पता" data-en="📍 Address">📍 पता</label>
+    <textarea id="fAddr" data-ph-hi="मकान नं, गली, मोहल्ला, मुरादाबाद" data-ph-en="House no, street, area, Moradabad" placeholder="मकान नं, गली, मोहल्ला, मुरादाबाद"></textarea>
+  </div>
+  <div class="field">
+    <label data-hi="📝 कोई खास बात? (वैकल्पिक)" data-en="📝 Special note? (optional)">📝 कोई खास बात? (वैकल्पिक)</label>
+    <input type="text" id="fNote" data-ph-hi="जैसे कम मसाला, बिना प्याज़" data-ph-en="e.g. less spicy, no onion" placeholder="जैसे कम मसाला, बिना प्याज़">
+  </div>
+  <div class="nav">
+    <button class="btn btn-back" onclick="goStep(4)" data-hi="वापस" data-en="Back">वापस</button>
+    <button class="btn btn-next" onclick="validateDetails()" data-hi="आगे →" data-en="Next →">आगे →</button>
+  </div>
+</div>
+
+<!-- STEP 6: PAYMENT + SUMMARY -->
+<div class="step" id="s6">
+  <div class="q-title" data-hi="ऑर्डर पक्का करें" data-en="Confirm your order">ऑर्डर पक्का करें</div>
+  <div class="q-sub" data-hi="जानकारी जाँचें" data-en="Review details">जानकारी जाँचें</div>
+  <div class="summary" id="summaryBox"></div>
+
+  <div class="q-sub" style="text-align:left;margin-bottom:8px;" data-hi="💳 भुगतान का तरीका" data-en="💳 Payment method">💳 भुगतान का तरीका</div>
+  <div class="opts-grid" style="margin-bottom:14px;">
+    <button class="opt-sm sel" onclick="setPay('upi',this)"><span class="opt-sm-ico">📱</span><span class="opt-sm-title">UPI</span><span class="opt-sm-desc" data-hi="अग्रिम" data-en="Advance">अग्रिम</span></button>
+    <button class="opt-sm" onclick="setPay('cash',this)"><span class="opt-sm-ico">💵</span><span class="opt-sm-title" data-hi="नकद" data-en="Cash">नकद</span><span class="opt-sm-desc" data-hi="डिलीवरी पर" data-en="On delivery">डिलीवरी पर</span></button>
   </div>
 
-  <div class="num">📞 8418962142</div>
+  <div class="pay-box" id="upiBox">
+    <div class="pay-note" data-hi="इस UPI पर भुगतान करें:" data-en="Pay to this UPI:">इस UPI पर भुगतान करें:</div>
+    <div class="pay-upi">avdheshkumar6542@ybl</div>
+    <div class="pay-name">SURYA PRAKASH SHARMA</div>
+    <div class="pay-note" style="margin-top:6px;" data-hi="भुगतान के बाद screenshot WhatsApp पर भेजें" data-en="Send payment screenshot on WhatsApp after paying">भुगतान के बाद screenshot WhatsApp पर भेजें</div>
+  </div>
+
+  <div class="note" data-hi="📲 'WhatsApp भेजें' दबाने पर आपका ऑर्डर तैयार दिखेगा — बस Send दबाएं" data-en="📲 Tap 'Send on WhatsApp' — your order will be ready, just press Send">📲 'WhatsApp भेजें' दबाने पर आपका ऑर्डर तैयार दिखेगा — बस Send दबाएं</div>
+
+  <div class="nav">
+    <button class="btn btn-back" onclick="goStep(5)" data-hi="वापस" data-en="Back">वापस</button>
+    <button class="btn btn-wa" onclick="sendOrder()" data-hi="📲 WhatsApp भेजें" data-en="📲 Send on WhatsApp">📲 WhatsApp भेजें</button>
+  </div>
+</div>
+
+<div class="foot">🦚 श्री जी टिफिन सेवा · मुरादाबाद · 8418962142</div>
 
 <script>
-// Auto-redirect to WhatsApp after 1.5 seconds
-var waUrl = "https://wa.me/918418962142?text=%F0%9F%A6%9A%20%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A5%80%20%E0%A4%9C%E0%A5%80%20%E0%A4%9F%E0%A4%BF%E0%A4%AB%E0%A4%BF%E0%A4%A8%20%E0%A4%B8%E0%A5%87%E0%A4%B5%E0%A4%BE%20%E2%80%94%20%E0%A4%A8%E0%A4%AF%E0%A4%BE%20%E0%A4%91%E0%A4%B0%E0%A5%8D%E0%A4%A1%E0%A4%B0%0A(Shri%20Jee%20Tifin%20Seva%20%E2%80%94%20New%20Order)%0A%0A%E0%A4%95%E0%A5%83%E0%A4%AA%E0%A4%AF%E0%A4%BE%20%E0%A4%A8%E0%A5%80%E0%A4%9A%E0%A5%87%20%E0%A4%AD%E0%A4%B0%E0%A4%95%E0%A4%B0%20%E0%A4%AD%E0%A5%87%E0%A4%9C%E0%A5%87%E0%A4%82%20%F0%9F%91%87%0APlease%20fill%20%26%20send%20below%20%F0%9F%91%87%0A%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%8C%90%20%E0%A4%AD%E0%A4%BE%E0%A4%B7%E0%A4%BE%2FLanguage%3A%20%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A5%80%20%2F%20English%0A%0A%F0%9F%91%A4%20%E0%A4%A8%E0%A4%BE%E0%A4%AE%2FName%3A%20%0A%F0%9F%93%9E%20%E0%A4%AE%E0%A5%8B%E0%A4%AC%E0%A4%BE%E0%A4%87%E0%A4%B2%2FMobile%3A%20%0A%F0%9F%93%8D%20%E0%A4%AA%E0%A4%A4%E0%A4%BE%2FAddress%3A%20%0A%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%8D%BD%EF%B8%8F%20%E0%A4%95%E0%A5%8D%E0%A4%AF%E0%A4%BE%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F%3F%20(%E2%9C%85%20%E0%A4%B2%E0%A4%97%E0%A4%BE%E0%A4%8F%E0%A4%82)%0A%0A%F0%9F%8C%85%20%E0%A4%A8%E0%A4%BE%E0%A4%B6%E0%A5%8D%E0%A4%A4%E0%A4%BE%2FBreakfast%20(%E2%82%B960-70)%0A%E2%98%80%EF%B8%8F%20%E0%A4%A6%E0%A5%8B%E0%A4%AA%E0%A4%B9%E0%A4%B0%2FLunch%20(%E2%82%B970)%0A%F0%9F%8C%99%20%E0%A4%B0%E0%A4%BE%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%BF%2FDinner%20(%E2%82%B970)%0A%0A%F0%9F%91%A5%20%E0%A4%95%E0%A4%BF%E0%A4%A4%E0%A4%A8%E0%A5%87%20%E0%A4%B2%E0%A5%8B%E0%A4%97%E0%A5%8B%E0%A4%82%20%E0%A4%95%E0%A5%87%20%E0%A4%B2%E0%A4%BF%E0%A4%8F%2FFor%20how%20many%3A%20%0A%F0%9F%93%85%20%E0%A4%A4%E0%A4%BE%E0%A4%B0%E0%A5%80%E0%A4%96%2FDate%3A%20%0A%F0%9F%95%90%20%E0%A4%B8%E0%A4%AE%E0%A4%AF%2FTime%3A%20%0A%0A%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%0A%F0%9F%92%B3%20%E0%A4%AD%E0%A5%81%E0%A4%97%E0%A4%A4%E0%A4%BE%E0%A4%A8%2FPayment%3A%20UPI%20%2F%20Cash%0A%F0%9F%93%A6%20%E0%A4%AE%E0%A4%BE%E0%A4%B8%E0%A4%BF%E0%A4%95%20%E0%A4%AA%E0%A5%88%E0%A4%95%3F%2010%25%20%E0%A4%9B%E0%A5%82%E0%A4%9F%3A%20%E0%A4%B9%E0%A4%BE%E0%A4%81%2F%E0%A4%A8%E0%A4%B9%E0%A5%80%E0%A4%82%0A%0A%F0%9F%99%8F%20%E0%A4%A7%E0%A4%A8%E0%A5%8D%E0%A4%AF%E0%A4%B5%E0%A4%BE%E0%A4%A6!";
-setTimeout(function(){
-  window.location.href = waUrl;
-}, 1500);
+var WA='918418962142';
+var st={lang:'hi',meals:[],qty:1,plan:'today',date:'',slot:'',pay:'upi'};
+var PRICE={breakfast:65,lunch:70,dinner:70};
+var NAME={breakfast:{hi:'नाश्ता',en:'Breakfast'},lunch:{hi:'दोपहर',en:'Lunch'},dinner:{hi:'रात्रि',en:'Dinner'}};
+
+// set min date tomorrow
+(function(){var d=new Date();d.setDate(d.getDate());var s=d.toISOString().split('T')[0];var f=document.getElementById('fDate');f.min=s;f.value=s;st.date=s;})();
+
+function applyLang(){
+  var L=st.lang;
+  document.querySelectorAll('[data-hi]').forEach(function(e){
+    var t=e.getAttribute('data-'+L); if(t!==null)e.textContent=t;
+  });
+  document.querySelectorAll('[data-ph-hi]').forEach(function(e){
+    var t=e.getAttribute('data-ph-'+L); if(t!==null)e.placeholder=t;
+  });
+  document.getElementById('brandName').textContent = L==='hi'?'श्री जी टिफिन सेवा':'Shri Jee Tifin Seva';
+  document.getElementById('brandTag').textContent = L==='hi'?'घर जैसा स्वाद, सेहत के साथ ❤️':'Homemade taste, with health ❤️';
+}
+
+function setLang(l,el){st.lang=l;applyLang();goStep(2);}
+
+function goStep(n){
+  for(var i=1;i<=6;i++){
+    document.getElementById('s'+i).classList.remove('active');
+    document.getElementById('p'+i).classList.toggle('done',i<=n);
+  }
+  document.getElementById('s'+n).classList.add('active');
+  if(n===6)buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleMeal(m,el){
+  el.classList.toggle('sel');
+  var i=st.meals.indexOf(m);
+  if(i>-1)st.meals.splice(i,1);else st.meals.push(m);
+}
+function validateMeal(){
+  if(st.meals.length===0){alert(st.lang==='hi'?'कृपया कम से कम एक खाना चुनें':'Please select at least one meal');return;}
+  goStep(3);
+}
+
+function changeQty(d){st.qty=Math.max(1,Math.min(50,st.qty+d));document.getElementById('qtyVal').textContent=st.qty;}
+function setPlan(p,el){st.plan=p;document.querySelectorAll('#s3 .opt-sm').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');}
+function setSlot(s,el){st.slot=s;document.querySelectorAll('#timeSlots .opt-sm').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');}
+function setPay(p,el){st.pay=p;document.querySelectorAll('#s6 .opt-sm').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');document.getElementById('upiBox').style.display=p==='upi'?'block':'none';}
+
+function validateDetails(){
+  var n=document.getElementById('fName').value.trim();
+  var p=document.getElementById('fPhone').value.trim();
+  var a=document.getElementById('fAddr').value.trim();
+  if(!n){alert(st.lang==='hi'?'कृपया नाम लिखें':'Please enter name');return;}
+  if(p.length!==10){alert(st.lang==='hi'?'सही 10 अंक का नंबर लिखें':'Enter valid 10-digit number');return;}
+  if(!a){alert(st.lang==='hi'?'कृपया पता लिखें':'Please enter address');return;}
+  st.date=document.getElementById('fDate').value;
+  goStep(6);
+}
+
+function calcTotal(){
+  var t=0;st.meals.forEach(function(m){t+=PRICE[m]*st.qty;});
+  if(st.plan==='monthly')t=Math.round(t*26*0.9);
+  return t;
+}
+
+function buildSummary(){
+  var L=st.lang;
+  var meals=st.meals.map(function(m){return NAME[m][L];}).join(', ');
+  var planTxt=st.plan==='monthly'?(L==='hi'?'मासिक पैक (10% छूट)':'Monthly (10% off)'):(st.plan==='ondemand'?(L==='hi'?'ज़रूरत पर':'When needed'):(L==='hi'?'आज का ऑर्डर':'Today only'));
+  var rows='';
+  function row(k,v){return '<div class="sum-row"><span class="sum-k">'+k+'</span><span class="sum-v">'+v+'</span></div>';}
+  rows+=row(L==='hi'?'खाना':'Meals',meals);
+  rows+=row(L==='hi'?'व्यक्ति':'Persons',st.qty);
+  rows+=row(L==='hi'?'प्रकार':'Type',planTxt);
+  rows+=row(L==='hi'?'तारीख':'Date',st.date);
+  if(st.slot)rows+=row(L==='hi'?'समय':'Time',st.slot);
+  rows+='<div class="sum-total"><span>'+(L==='hi'?'कुल':'Total')+'</span><span>₹'+calcTotal()+'</span></div>';
+  document.getElementById('summaryBox').innerHTML=rows;
+}
+
+function sendOrder(){
+  var L=st.lang;
+  var meals=st.meals.map(function(m){return NAME[m][L];}).join(', ');
+  var planTxt=st.plan==='monthly'?(L==='hi'?'मासिक पैक':'Monthly'):(st.plan==='ondemand'?(L==='hi'?'ज़रूरत पर':'When needed'):(L==='hi'?'आज का':'Today'));
+  var name=document.getElementById('fName').value.trim();
+  var phone=document.getElementById('fPhone').value.trim();
+  var addr=document.getElementById('fAddr').value.trim();
+  var note=document.getElementById('fNote').value.trim();
+  var pay=st.pay==='upi'?'UPI':(L==='hi'?'नकद':'Cash');
+  var oid='SJT'+Date.now().toString().slice(-5);
+
+  var m='🦚 श्री जी टिफिन सेवा\n';
+  m+='New Order / नया ऑर्डर\n';
+  m+='ID: '+oid+'\n';
+  m+='--------------------\n';
+  m+='👤 '+name+'\n';
+  m+='📞 '+phone+'\n';
+  m+='📍 '+addr+'\n';
+  m+='--------------------\n';
+  m+='🍽️ '+meals+'\n';
+  m+='👥 '+st.qty+'\n';
+  m+='📋 '+planTxt+'\n';
+  m+='📅 '+st.date+'\n';
+  if(st.slot)m+='🕐 '+st.slot+'\n';
+  m+='💰 ₹'+calcTotal()+'\n';
+  m+='💳 '+pay+'\n';
+  if(note)m+='📝 '+note+'\n';
+  m+='--------------------\n';
+  if(st.pay==='upi')m+='UPI: avdheshkumar6542@ybl\n(screenshot भेजें)\n';
+  m+='🙏 धन्यवाद';
+
+  var url='https://wa.me/'+WA+'?text='+encodeURIComponent(m);
+  window.location.href=url;
+}
+
+applyLang();
 </script>
 </body>
 </html>
