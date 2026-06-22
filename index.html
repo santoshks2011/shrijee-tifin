@@ -6,6 +6,12 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>श्री जी टिफिन सेवा — ऑर्डर करें</title>
+<meta property="og:title" content="🦚 श्री जी टिफिन सेवा — ऑर्डर करें">
+<meta property="og:description" content="घर जैसा स्वाद, सेहत के साथ ❤️ | नाश्ता ₹60-70 · दोपहर ₹70 · रात्रि ₹70 | मुरादाबाद होम डिलीवरी | 📞 8418962142">
+<meta property="og:image" content="https://tifin.guditmes.com/shrijee-preview.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tifin.guditmes.com">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -265,10 +271,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   </div>
 
   <div class="pay-box" id="upiBox">
-    <div class="pay-note" data-hi="इस UPI पर भुगतान करें:" data-en="Pay to this UPI:">इस UPI पर भुगतान करें:</div>
-    <div class="pay-upi">avdheshkumar6542@ybl</div>
+    <button onclick="payUPI()" style="width:100%;background:linear-gradient(90deg,#6b21a8,#9333ea);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(107,33,168,.4);margin-bottom:12px;">
+      <span data-hi="💳 UPI ऐप से भुगतान करें" data-en="💳 Pay with UPI App">💳 UPI ऐप से भुगतान करें</span>
+    </button>
+    <div class="pay-note" data-hi="या इस UPI ID पर भेजें:" data-en="Or pay to this UPI ID:">या इस UPI ID पर भेजें:</div>
+    <div class="pay-upi" id="upiIdText">avdheshkumar6542@ybl</div>
     <div class="pay-name">SURYA PRAKASH SHARMA</div>
-    <div class="pay-note" style="margin-top:6px;" data-hi="भुगतान के बाद screenshot WhatsApp पर भेजें" data-en="Send payment screenshot on WhatsApp after paying">भुगतान के बाद screenshot WhatsApp पर भेजें</div>
+    <button onclick="copyUPI()" style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px;">
+      <span data-hi="📋 UPI ID कॉपी करें" data-en="📋 Copy UPI ID">📋 UPI ID कॉपी करें</span>
+    </button>
+    <div class="pay-note" style="margin-top:10px;" data-hi="भुगतान के बाद screenshot WhatsApp पर भेजें" data-en="Send payment screenshot on WhatsApp after paying">भुगतान के बाद screenshot WhatsApp पर भेजें</div>
   </div>
 
   <div class="note" data-hi="📲 'WhatsApp भेजें' दबाने पर आपका ऑर्डर तैयार दिखेगा — बस Send दबाएं" data-en="📲 Tap 'Send on WhatsApp' — your order will be ready, just press Send">📲 'WhatsApp भेजें' दबाने पर आपका ऑर्डर तैयार दिखेगा — बस Send दबाएं</div>
@@ -328,6 +340,24 @@ function changeQty(d){st.qty=Math.max(1,Math.min(50,st.qty+d));document.getEleme
 function setPlan(p,el){st.plan=p;document.querySelectorAll('#s3 .opt-sm').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');}
 function setSlot(s,el){st.slot=s;document.querySelectorAll('#timeSlots .opt-sm').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');}
 function setPay(p,el){st.pay=p;document.querySelectorAll('#s6 .opt-sm').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');document.getElementById('upiBox').style.display=p==='upi'?'block':'none';}
+
+function payUPI(){
+  var amt=calcTotal();
+  var upiUrl='upi://pay?pa=avdheshkumar6542@ybl&pn=SURYA%20PRAKASH%20SHARMA&am='+amt+'&cu=INR&tn=ShriJeeTifin';
+  window.location.href=upiUrl;
+  // fallback message after a moment if no UPI app
+  setTimeout(function(){
+    var L=st.lang;
+    alert(L==='hi'?'अगर UPI ऐप नहीं खुला, तो UPI ID कॉपी करके किसी भी ऐप (PhonePe/GPay/Paytm) में भुगतान करें।':'If UPI app did not open, copy the UPI ID and pay in any app (PhonePe/GPay/Paytm).');
+  },2500);
+}
+
+function copyUPI(){
+  var id='avdheshkumar6542@ybl';
+  if(navigator.clipboard){navigator.clipboard.writeText(id);}
+  var L=st.lang;
+  alert((L==='hi'?'UPI ID कॉपी हो गई: ':'UPI ID copied: ')+id);
+}
 
 function validateDetails(){
   var n=document.getElementById('fName').value.trim();
