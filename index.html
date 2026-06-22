@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>श्री जी टिफिन सेवा — ऑर्डर करें</title>
 <meta property="og:title" content="🦚 श्री जी टिफिन सेवा — ऑर्डर करें">
-<meta property="og:description" content="घर जैसा स्वाद, सेहत के साथ ❤️ | नाश्ता ₹60-70 · दोपहर ₹70 · रात्रि ₹70 | मुरादाबाद होम डिलीवरी | 📞 8418962142">
+<meta property="og:description" content="घर जैसा स्वाद, सेहत के साथ ❤️ | नाश्ता ₹60-80 · दोपहर ₹70 · रात्रि ₹70 | मुरादाबाद होम डिलीवरी | 📞 8418962142">
 <meta property="og:image" content="https://tifin.guditmes.com/shrijee-preview.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tifin.guditmes.com">
@@ -157,9 +157,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <div class="opts">
     <button class="opt" onclick="toggleMeal('breakfast',this)">
       <span class="opt-ico">🌅</span>
-      <span class="opt-body"><span class="opt-title" data-hi="नाश्ता" data-en="Breakfast">नाश्ता</span><span class="opt-desc" data-hi="परांठा/पोहा/जवे/इडली + चटनी/दही" data-en="Paratha/Poha/Jve/Idli + sides">परांठा/पोहा/जवे/इडली + चटनी/दही</span></span>
-      <span class="opt-price">₹60–70</span>
+      <span class="opt-body"><span class="opt-title" data-hi="नाश्ता" data-en="Breakfast">नाश्ता</span><span class="opt-desc" data-hi="नीचे आइटम चुनें" data-en="Choose item below">नीचे आइटम चुनें</span></span>
+      <span class="opt-price">₹60–80</span>
     </button>
+    <div id="bfastItems" style="display:none;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:10px;margin-top:-4px;">
+      <div style="color:#fbbf24;font-size:12px;font-weight:700;margin-bottom:8px;text-align:center;" data-hi="कौन सा नाश्ता? (कोई एक चुनें)" data-en="Which breakfast? (Pick one)">कौन सा नाश्ता? (कोई एक चुनें)</div>
+      <div class="opts-grid" style="grid-template-columns:1fr 1fr;">
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Besan Chilla',80,this)"><span class="opt-sm-title">बेसन चिल्ला</span><span class="opt-sm-desc">₹80</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Sabudana',80,this)"><span class="opt-sm-title">साबूदाना</span><span class="opt-sm-desc">₹80</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Daliya Namkeen',70,this)"><span class="opt-sm-title">दलिया नमकीन</span><span class="opt-sm-desc">₹70</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Bread Pakoda',80,this)"><span class="opt-sm-title">ब्रेड पकोड़ा</span><span class="opt-sm-desc">₹80</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Plain Paratha+Curd',70,this)"><span class="opt-sm-title">प्लेन परांठा+दही</span><span class="opt-sm-desc">₹70</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Pyaaj Paratha',80,this)"><span class="opt-sm-title">प्याज़ परांठा</span><span class="opt-sm-desc">₹80</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Gobi Paratha',80,this)"><span class="opt-sm-title">गोभी परांठा</span><span class="opt-sm-desc">₹80</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Aloo Paratha',80,this)"><span class="opt-sm-title">आलू परांठा</span><span class="opt-sm-desc">₹80</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Poha',70,this)"><span class="opt-sm-title">पोहा</span><span class="opt-sm-desc">₹70</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Javei Namkeen',70,this)"><span class="opt-sm-title">जावी नमकीन</span><span class="opt-sm-desc">₹70</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Halwa/Kala Chana',60,this)"><span class="opt-sm-title">हलवा/काला चना</span><span class="opt-sm-desc">₹60</span></button>
+        <button class="opt-sm bfast-pick" onclick="pickBfast('Custom',70,this)"><span class="opt-sm-title" data-hi="कस्टम" data-en="Custom">कस्टम</span><span class="opt-sm-desc">₹70</span></button>
+      </div>
+    </div>
     <button class="opt" onclick="toggleMeal('lunch',this)">
       <span class="opt-ico">☀️</span>
       <span class="opt-body"><span class="opt-title" data-hi="दोपहर" data-en="Lunch">दोपहर</span><span class="opt-desc" data-hi="4 चपाती+चावल+दाल+सलाद+सब्जी" data-en="4 Chapati+Rice+Dal+Salad+Sabzi">4 चपाती+चावल+दाल+सलाद+सब्जी</span></span>
@@ -295,8 +312,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 
 <script>
 var WA='918418962142';
-var st={lang:'hi',meals:[],qty:1,plan:'today',date:'',slot:'',pay:'upi'};
-var PRICE={breakfast:65,lunch:70,dinner:70};
+var st={lang:'hi',meals:[],qty:1,plan:'today',date:'',slot:'',pay:'upi',bfastItem:'',bfastPrice:0};
+var PRICE={breakfast:70,lunch:70,dinner:70};
 var NAME={breakfast:{hi:'नाश्ता',en:'Breakfast'},lunch:{hi:'दोपहर',en:'Lunch'},dinner:{hi:'रात्रि',en:'Dinner'}};
 
 // set min date tomorrow
@@ -330,9 +347,21 @@ function toggleMeal(m,el){
   el.classList.toggle('sel');
   var i=st.meals.indexOf(m);
   if(i>-1)st.meals.splice(i,1);else st.meals.push(m);
+  // show/hide breakfast item picker
+  if(m==='breakfast'){
+    var box=document.getElementById('bfastItems');
+    if(st.meals.indexOf('breakfast')>-1){box.style.display='block';}
+    else{box.style.display='none';st.bfastItem='';st.bfastPrice=0;document.querySelectorAll('.bfast-pick').forEach(function(e){e.classList.remove('sel');});}
+  }
+}
+function pickBfast(name,price,el){
+  st.bfastItem=name;st.bfastPrice=price;
+  document.querySelectorAll('.bfast-pick').forEach(function(e){e.classList.remove('sel');});
+  el.classList.add('sel');
 }
 function validateMeal(){
   if(st.meals.length===0){alert(st.lang==='hi'?'कृपया कम से कम एक खाना चुनें':'Please select at least one meal');return;}
+  if(st.meals.indexOf('breakfast')>-1 && !st.bfastItem){alert(st.lang==='hi'?'कृपया नाश्ता आइटम चुनें':'Please choose a breakfast item');return;}
   goStep(3);
 }
 
@@ -372,14 +401,21 @@ function validateDetails(){
 }
 
 function calcTotal(){
-  var t=0;st.meals.forEach(function(m){t+=PRICE[m]*st.qty;});
+  var t=0;
+  st.meals.forEach(function(m){
+    if(m==='breakfast'){t+=(st.bfastPrice||70)*st.qty;}
+    else{t+=PRICE[m]*st.qty;}
+  });
   if(st.plan==='monthly')t=Math.round(t*26*0.9);
   return t;
 }
 
 function buildSummary(){
   var L=st.lang;
-  var meals=st.meals.map(function(m){return NAME[m][L];}).join(', ');
+  var meals=st.meals.map(function(m){
+    if(m==='breakfast'&&st.bfastItem){return NAME[m][L]+' ('+st.bfastItem+' ₹'+st.bfastPrice+')';}
+    return NAME[m][L];
+  }).join(', ');
   var planTxt=st.plan==='monthly'?(L==='hi'?'मासिक पैक (10% छूट)':'Monthly (10% off)'):(st.plan==='ondemand'?(L==='hi'?'ज़रूरत पर':'When needed'):(L==='hi'?'आज का ऑर्डर':'Today only'));
   var rows='';
   function row(k,v){return '<div class="sum-row"><span class="sum-k">'+k+'</span><span class="sum-v">'+v+'</span></div>';}
@@ -394,7 +430,10 @@ function buildSummary(){
 
 function sendOrder(){
   var L=st.lang;
-  var meals=st.meals.map(function(m){return NAME[m][L];}).join(', ');
+  var meals=st.meals.map(function(m){
+    if(m==='breakfast'&&st.bfastItem){return NAME[m][L]+' ('+st.bfastItem+' Rs'+st.bfastPrice+')';}
+    return NAME[m][L];
+  }).join(', ');
   var planTxt=st.plan==='monthly'?(L==='hi'?'मासिक पैक':'Monthly'):(st.plan==='ondemand'?(L==='hi'?'ज़रूरत पर':'When needed'):(L==='hi'?'आज का':'Today'));
   var name=document.getElementById('fName').value.trim();
   var phone=document.getElementById('fPhone').value.trim();
