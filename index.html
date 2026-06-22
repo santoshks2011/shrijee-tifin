@@ -402,26 +402,35 @@ function sendOrder(){
   var note=document.getElementById('fNote').value.trim();
   var pay=st.pay==='upi'?'UPI':(L==='hi'?'नकद':'Cash');
   var oid='SJT'+Date.now().toString().slice(-5);
+  var L=st.lang;
 
-  var m='🦚 श्री जी टिफिन सेवा\n';
-  m+='New Order / नया ऑर्डर\n';
-  m+='ID: '+oid+'\n';
-  m+='--------------------\n';
-  m+='👤 '+name+'\n';
-  m+='📞 '+phone+'\n';
-  m+='📍 '+addr+'\n';
-  m+='--------------------\n';
-  m+='🍽️ '+meals+'\n';
-  m+='👥 '+st.qty+'\n';
-  m+='📋 '+planTxt+'\n';
-  m+='📅 '+st.date+'\n';
-  if(st.slot)m+='🕐 '+st.slot+'\n';
-  m+='💰 ₹'+calcTotal()+'\n';
-  m+='💳 '+pay+'\n';
-  if(note)m+='📝 '+note+'\n';
-  m+='--------------------\n';
-  if(st.pay==='upi')m+='UPI: avdheshkumar6542@ybl\n(screenshot भेजें)\n';
-  m+='🙏 धन्यवाद';
+  var m='*=== SHRI JEE TIFIN SEVA ===*\n';
+  m+='*श्री जी टिफिन सेवा*\n';
+  m+=(L==='hi'?'_नया ऑर्डर_':'_New Order_')+'\n';
+  m+='\n';
+  m+='*Order ID:* '+oid+'\n';
+  m+='-------------------------\n';
+  m+='*'+(L==='hi'?'नाम/Name':'Name')+':* '+name+'\n';
+  m+='*'+(L==='hi'?'फ़ोन/Phone':'Phone')+':* '+phone+'\n';
+  m+='*'+(L==='hi'?'पता/Address':'Address')+':* '+addr+'\n';
+  m+='-------------------------\n';
+  m+='*'+(L==='hi'?'खाना/Meal':'Meal')+':* '+meals+'\n';
+  m+='*'+(L==='hi'?'व्यक्ति/Persons':'Persons')+':* '+st.qty+'\n';
+  m+='*'+(L==='hi'?'प्रकार/Type':'Type')+':* '+planTxt+'\n';
+  m+='*'+(L==='hi'?'तारीख/Date':'Date')+':* '+st.date+'\n';
+  if(st.slot)m+='*'+(L==='hi'?'समय/Time':'Time')+':* '+st.slot+'\n';
+  if(note)m+='*'+(L==='hi'?'नोट/Note':'Note')+':* '+note+'\n';
+  m+='-------------------------\n';
+  m+='*'+(L==='hi'?'कुल राशि/Total':'Total')+':* Rs '+calcTotal()+'\n';
+  m+='*'+(L==='hi'?'भुगतान/Payment':'Payment')+':* '+pay+'\n';
+  if(st.pay==='upi'){
+    m+='-------------------------\n';
+    m+='*UPI ID:* avdheshkumar6542@ybl\n';
+    m+='*Name:* SURYA PRAKASH SHARMA\n';
+    m+=(L==='hi'?'_(भुगतान के बाद screenshot भेजें)_':'_(Send screenshot after payment)_')+'\n';
+  }
+  m+='-------------------------\n';
+  m+=(L==='hi'?'धन्यवाद! / Thank you!':'Thank you!');
 
   var url='https://wa.me/'+WA+'?text='+encodeURIComponent(m);
   window.location.href=url;
