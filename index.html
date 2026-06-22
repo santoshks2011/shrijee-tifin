@@ -2,6 +2,8 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>श्री जी टिफिन सेवा — ऑर्डर करें</title>
 <style>
@@ -104,6 +106,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <h1 id="brandName">श्री जी टिफिन सेवा</h1>
   <div class="en">Shri Jee Tifin Seva</div>
   <div class="tag" id="brandTag">घर जैसा स्वाद, सेहत के साथ ❤️</div>
+</div>
+
+<div id="reorderBanner" style="display:none;background:rgba(134,239,172,.15);border:1px solid rgba(134,239,172,.4);margin:12px 18px 0;border-radius:12px;padding:12px 14px;">
+  <div style="color:#86efac;font-size:13px;font-weight:700;margin-bottom:8px;" id="welcomeBack">👋 वापसी पर स्वागत है!</div>
+  <div style="color:#d8b4fe;font-size:12px;margin-bottom:10px;" id="savedInfo"></div>
+  <div style="display:flex;gap:8px;">
+    <button onclick="useReorder()" style="flex:1;background:#16a34a;color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;" id="reorderBtn">✓ इन्हीं details से ऑर्डर करें</button>
+    <button onclick="clearSaved()" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 14px;font-size:12px;font-family:inherit;cursor:pointer;" id="clearBtn">नया ग्राहक</button>
+  </div>
 </div>
 
 <div class="progress">
@@ -326,6 +337,7 @@ function validateDetails(){
   if(p.length!==10){alert(st.lang==='hi'?'सही 10 अंक का नंबर लिखें':'Enter valid 10-digit number');return;}
   if(!a){alert(st.lang==='hi'?'कृपया पता लिखें':'Please enter address');return;}
   st.date=document.getElementById('fDate').value;
+  saveCustomer();
   goStep(6);
 }
 
@@ -385,6 +397,62 @@ function sendOrder(){
   window.location.href=url;
 }
 
+
+// ===== QUICK REORDER (localStorage) =====
+var SKEY='shrijee_customer';
+
+function loadSaved(){
+  try{
+    var raw=localStorage.getItem(SKEY);
+    if(!raw)return null;
+    return JSON.parse(raw);
+  }catch(e){return null;}
+}
+
+function saveCustomer(){
+  try{
+    var data={
+      name:document.getElementById('fName').value.trim(),
+      phone:document.getElementById('fPhone').value.trim(),
+      addr:document.getElementById('fAddr').value.trim(),
+      lang:st.lang
+    };
+    localStorage.setItem(SKEY,JSON.stringify(data));
+  }catch(e){}
+}
+
+function showReorderBanner(){
+  var s=loadSaved();
+  if(s&&s.name){
+    document.getElementById('reorderBanner').style.display='block';
+    var L=s.lang||'hi';
+    document.getElementById('welcomeBack').textContent=L==='hi'?'👋 '+s.name+' जी, वापसी पर स्वागत है!':'👋 Welcome back, '+s.name+'!';
+    document.getElementById('savedInfo').textContent=(L==='hi'?'📍 ':'📍 ')+s.addr;
+    document.getElementById('reorderBtn').textContent=L==='hi'?'✓ इन्हीं details से आगे बढ़ें':'✓ Continue with these details';
+    document.getElementById('clearBtn').textContent=L==='hi'?'नया ग्राहक':'New customer';
+  }
+}
+
+function useReorder(){
+  var s=loadSaved();
+  if(s){
+    st.lang=s.lang||'hi';
+    applyLang();
+    // prefill fields
+    document.getElementById('fName').value=s.name||'';
+    document.getElementById('fPhone').value=s.phone||'';
+    document.getElementById('fAddr').value=s.addr||'';
+  }
+  document.getElementById('reorderBanner').style.display='none';
+  goStep(2); // skip language, go to meal selection
+}
+
+function clearSaved(){
+  try{localStorage.removeItem(SKEY);}catch(e){}
+  document.getElementById('reorderBanner').style.display='none';
+}
+
+showReorderBanner();
 applyLang();
 </script>
 </body>
