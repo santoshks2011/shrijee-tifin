@@ -161,21 +161,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <span class="opt-price">₹60–80</span>
     </button>
     <div id="bfastItems" style="display:none;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:10px;margin-top:-4px;">
-      <div style="color:#fbbf24;font-size:12px;font-weight:700;margin-bottom:8px;text-align:center;" data-hi="कौन सा नाश्ता? (कोई एक चुनें)" data-en="Which breakfast? (Pick one)">कौन सा नाश्ता? (कोई एक चुनें)</div>
-      <div class="opts-grid" style="grid-template-columns:1fr 1fr;">
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Besan Chilla',80,this)"><span class="opt-sm-title">बेसन चिल्ला</span><span class="opt-sm-desc">₹80</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Sabudana',80,this)"><span class="opt-sm-title">साबूदाना</span><span class="opt-sm-desc">₹80</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Daliya Namkeen',70,this)"><span class="opt-sm-title">दलिया नमकीन</span><span class="opt-sm-desc">₹70</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Bread Pakoda',80,this)"><span class="opt-sm-title">ब्रेड पकोड़ा</span><span class="opt-sm-desc">₹80</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Plain Paratha+Curd',70,this)"><span class="opt-sm-title">प्लेन परांठा+दही</span><span class="opt-sm-desc">₹70</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Pyaaj Paratha',80,this)"><span class="opt-sm-title">प्याज़ परांठा</span><span class="opt-sm-desc">₹80</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Gobi Paratha',80,this)"><span class="opt-sm-title">गोभी परांठा</span><span class="opt-sm-desc">₹80</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Aloo Paratha',80,this)"><span class="opt-sm-title">आलू परांठा</span><span class="opt-sm-desc">₹80</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Poha',70,this)"><span class="opt-sm-title">पोहा</span><span class="opt-sm-desc">₹70</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Javei Namkeen',70,this)"><span class="opt-sm-title">जावी नमकीन</span><span class="opt-sm-desc">₹70</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Halwa/Kala Chana',60,this)"><span class="opt-sm-title">हलवा/काला चना</span><span class="opt-sm-desc">₹60</span></button>
-        <button class="opt-sm bfast-pick" onclick="pickBfast('Custom',70,this)"><span class="opt-sm-title" data-hi="कस्टम" data-en="Custom">कस्टम</span><span class="opt-sm-desc">₹70</span></button>
-      </div>
+      <div style="color:#fbbf24;font-size:12px;font-weight:700;margin-bottom:8px;text-align:center;" data-hi="नाश्ता आइटम चुनें (मात्रा बढ़ाएं)" data-en="Choose breakfast items (set quantity)">नाश्ता आइटम चुनें (मात्रा बढ़ाएं)</div>
+      <div id="bfastList"></div>
+      <div id="bfastTotal" style="display:none;color:#86efac;font-size:12px;font-weight:700;text-align:center;margin-top:8px;padding-top:8px;border-top:1px solid rgba(251,191,36,.2);"></div>
     </div>
     <button class="opt" onclick="toggleMeal('lunch',this)">
       <span class="opt-ico">☀️</span>
@@ -197,12 +185,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 
 <!-- STEP 3: PERSONS + PLAN -->
 <div class="step" id="s3">
+  <div id="personsBlock">
   <div class="q-title" data-hi="कितने लोगों के लिए?" data-en="For how many people?">कितने लोगों के लिए?</div>
-  <div class="q-sub" data-hi="व्यक्तियों की संख्या" data-en="Number of persons">व्यक्तियों की संख्या</div>
+  <div class="q-sub" data-hi="दोपहर/रात्रि के लिए (नाश्ता अलग से चुना गया)" data-en="For Lunch/Dinner (Breakfast chosen separately)">दोपहर/रात्रि के लिए (नाश्ता अलग से चुना गया)</div>
   <div class="stepper">
     <button onclick="changeQty(-1)">−</button>
     <div class="val" id="qtyVal">1</div>
     <button onclick="changeQty(1)">+</button>
+  </div>
   </div>
   <div class="q-sub" style="margin-top:18px;" data-hi="ऑर्डर का प्रकार" data-en="Order type">ऑर्डर का प्रकार</div>
   <div class="opts-grid" style="grid-template-columns:1fr 1fr 1fr;">
@@ -312,9 +302,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 
 <script>
 var WA='918418962142';
-var st={lang:'hi',meals:[],qty:1,plan:'today',date:'',slot:'',pay:'upi',bfastItem:'',bfastPrice:0};
+var st={lang:'hi',meals:[],qty:1,plan:'today',date:'',slot:'',pay:'upi',bfastCart:{}};
 var PRICE={breakfast:70,lunch:70,dinner:70};
 var NAME={breakfast:{hi:'नाश्ता',en:'Breakfast'},lunch:{hi:'दोपहर',en:'Lunch'},dinner:{hi:'रात्रि',en:'Dinner'}};
+var BFAST=[
+  {id:'besan',hi:'बेसन चिल्ला',en:'Besan Chilla',p:80},
+  {id:'sabudana',hi:'साबूदाना',en:'Sabudana',p:80},
+  {id:'daliya',hi:'दलिया नमकीन',en:'Daliya Namkeen',p:70},
+  {id:'bread',hi:'ब्रेड पकोड़ा',en:'Bread Pakoda',p:80},
+  {id:'plain',hi:'प्लेन परांठा+दही',en:'Plain Paratha+Curd',p:70},
+  {id:'pyaaj',hi:'प्याज़ परांठा',en:'Pyaaj Paratha',p:80},
+  {id:'gobi',hi:'गोभी परांठा',en:'Gobi Paratha',p:80},
+  {id:'aloo',hi:'आलू परांठा',en:'Aloo Paratha',p:80},
+  {id:'poha',hi:'पोहा',en:'Poha',p:70},
+  {id:'javei',hi:'जावी नमकीन',en:'Javei Namkeen',p:70},
+  {id:'halwa',hi:'हलवा/काला चना',en:'Halwa/Kala Chana',p:60},
+  {id:'custom',hi:'कस्टम',en:'Custom',p:70}
+];
 
 // set min date tomorrow
 (function(){var d=new Date();d.setDate(d.getDate());var s=d.toISOString().split('T')[0];var f=document.getElementById('fDate');f.min=s;f.value=s;st.date=s;})();
@@ -347,21 +351,58 @@ function toggleMeal(m,el){
   el.classList.toggle('sel');
   var i=st.meals.indexOf(m);
   if(i>-1)st.meals.splice(i,1);else st.meals.push(m);
-  // show/hide breakfast item picker
   if(m==='breakfast'){
     var box=document.getElementById('bfastItems');
-    if(st.meals.indexOf('breakfast')>-1){box.style.display='block';}
-    else{box.style.display='none';st.bfastItem='';st.bfastPrice=0;document.querySelectorAll('.bfast-pick').forEach(function(e){e.classList.remove('sel');});}
+    if(st.meals.indexOf('breakfast')>-1){box.style.display='block';renderBfast();}
+    else{box.style.display='none';st.bfastCart={};}
   }
 }
-function pickBfast(name,price,el){
-  st.bfastItem=name;st.bfastPrice=price;
-  document.querySelectorAll('.bfast-pick').forEach(function(e){e.classList.remove('sel');});
-  el.classList.add('sel');
+
+function renderBfast(){
+  var L=st.lang;
+  var html='';
+  BFAST.forEach(function(it){
+    var q=st.bfastCart[it.id]||0;
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.06);">';
+    html+='<div style="flex:1;"><span style="color:#fff;font-size:13px;font-weight:600;">'+it[L]+'</span> <span style="color:#fbbf24;font-size:12px;font-weight:700;">₹'+it.p+'</span></div>';
+    html+='<div style="display:flex;align-items:center;gap:0;">';
+    html+='<button onclick="bfastQty(\''+it.id+'\',-1)" style="width:30px;height:30px;border:none;background:#f3e8ff;color:#6b21a8;font-size:18px;font-weight:700;border-radius:6px 0 0 6px;cursor:pointer;">−</button>';
+    html+='<span style="width:34px;height:30px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#1c1917;" id="bq_'+it.id+'">'+q+'</span>';
+    html+='<button onclick="bfastQty(\''+it.id+'\',1)" style="width:30px;height:30px;border:none;background:#f3e8ff;color:#6b21a8;font-size:18px;font-weight:700;border-radius:0 6px 6px 0;cursor:pointer;">+</button>';
+    html+='</div></div>';
+  });
+  document.getElementById('bfastList').innerHTML=html;
+  updateBfastTotal();
 }
+
+function bfastQty(id,d){
+  var q=(st.bfastCart[id]||0)+d;
+  if(q<=0){delete st.bfastCart[id];q=0;}
+  else{st.bfastCart[id]=q;}
+  var el=document.getElementById('bq_'+id);
+  if(el)el.textContent=q;
+  updateBfastTotal();
+}
+
+function updateBfastTotal(){
+  var L=st.lang;
+  var total=0,count=0;
+  for(var id in st.bfastCart){
+    var it=BFAST.filter(function(x){return x.id===id;})[0];
+    if(it){total+=it.p*st.bfastCart[id];count+=st.bfastCart[id];}
+  }
+  var box=document.getElementById('bfastTotal');
+  if(count>0){box.style.display='block';box.textContent=(L==='hi'?'नाश्ता: ':'Breakfast: ')+count+(L==='hi'?' आइटम · ₹':' items · ₹')+total;}
+  else{box.style.display='none';}
+}
+
 function validateMeal(){
   if(st.meals.length===0){alert(st.lang==='hi'?'कृपया कम से कम एक खाना चुनें':'Please select at least one meal');return;}
-  if(st.meals.indexOf('breakfast')>-1 && !st.bfastItem){alert(st.lang==='hi'?'कृपया नाश्ता आइटम चुनें':'Please choose a breakfast item');return;}
+  if(st.meals.indexOf('breakfast')>-1 && Object.keys(st.bfastCart).length===0){alert(st.lang==='hi'?'कृपया नाश्ता आइटम चुनें':'Please choose breakfast item(s)');return;}
+  // hide persons block if only breakfast (breakfast uses its own quantities)
+  var hasLunchDinner = st.meals.indexOf('lunch')>-1 || st.meals.indexOf('dinner')>-1;
+  document.getElementById('personsBlock').style.display = hasLunchDinner ? 'block' : 'none';
+  if(!hasLunchDinner)st.qty=1;
   goStep(3);
 }
 
@@ -400,10 +441,28 @@ function validateDetails(){
   goStep(6);
 }
 
+function bfastSum(){
+  var t=0;
+  for(var id in st.bfastCart){
+    var it=BFAST.filter(function(x){return x.id===id;})[0];
+    if(it)t+=it.p*st.bfastCart[id];
+  }
+  return t;
+}
+
+function bfastText(L){
+  var parts=[];
+  for(var id in st.bfastCart){
+    var it=BFAST.filter(function(x){return x.id===id;})[0];
+    if(it)parts.push(st.bfastCart[id]+'x '+it[L]+' (₹'+(it.p*st.bfastCart[id])+')');
+  }
+  return parts.join(', ');
+}
+
 function calcTotal(){
   var t=0;
   st.meals.forEach(function(m){
-    if(m==='breakfast'){t+=(st.bfastPrice||70)*st.qty;}
+    if(m==='breakfast'){t+=bfastSum();}
     else{t+=PRICE[m]*st.qty;}
   });
   if(st.plan==='monthly')t=Math.round(t*26*0.9);
@@ -412,15 +471,17 @@ function calcTotal(){
 
 function buildSummary(){
   var L=st.lang;
-  var meals=st.meals.map(function(m){
-    if(m==='breakfast'&&st.bfastItem){return NAME[m][L]+' ('+st.bfastItem+' ₹'+st.bfastPrice+')';}
-    return NAME[m][L];
-  }).join(', ');
+  var mealParts=[];
+  st.meals.forEach(function(m){
+    if(m==='breakfast'){mealParts.push(NAME[m][L]+': '+bfastText(L));}
+    else{mealParts.push(NAME[m][L]);}
+  });
+  var meals=mealParts.join(' | ');
   var planTxt=st.plan==='monthly'?(L==='hi'?'मासिक पैक (10% छूट)':'Monthly (10% off)'):(st.plan==='ondemand'?(L==='hi'?'ज़रूरत पर':'When needed'):(L==='hi'?'आज का ऑर्डर':'Today only'));
   var rows='';
   function row(k,v){return '<div class="sum-row"><span class="sum-k">'+k+'</span><span class="sum-v">'+v+'</span></div>';}
   rows+=row(L==='hi'?'खाना':'Meals',meals);
-  rows+=row(L==='hi'?'व्यक्ति':'Persons',st.qty);
+  if(st.meals.indexOf('lunch')>-1||st.meals.indexOf('dinner')>-1)rows+=row(L==='hi'?'व्यक्ति':'Persons',st.qty);
   rows+=row(L==='hi'?'प्रकार':'Type',planTxt);
   rows+=row(L==='hi'?'तारीख':'Date',st.date);
   if(st.slot)rows+=row(L==='hi'?'समय':'Time',st.slot);
@@ -430,10 +491,12 @@ function buildSummary(){
 
 function sendOrder(){
   var L=st.lang;
-  var meals=st.meals.map(function(m){
-    if(m==='breakfast'&&st.bfastItem){return NAME[m][L]+' ('+st.bfastItem+' Rs'+st.bfastPrice+')';}
-    return NAME[m][L];
-  }).join(', ');
+  var mealParts=[];
+  st.meals.forEach(function(m){
+    if(m==='breakfast'){mealParts.push(NAME[m][L]+': '+bfastText(L));}
+    else{mealParts.push(NAME[m][L]);}
+  });
+  var meals=mealParts.join(' | ');
   var planTxt=st.plan==='monthly'?(L==='hi'?'मासिक पैक':'Monthly'):(st.plan==='ondemand'?(L==='hi'?'ज़रूरत पर':'When needed'):(L==='hi'?'आज का':'Today'));
   var name=document.getElementById('fName').value.trim();
   var phone=document.getElementById('fPhone').value.trim();
@@ -441,7 +504,6 @@ function sendOrder(){
   var note=document.getElementById('fNote').value.trim();
   var pay=st.pay==='upi'?'UPI':(L==='hi'?'नकद':'Cash');
   var oid='SJT'+Date.now().toString().slice(-5);
-  var L=st.lang;
 
   var m='*=== SHRI JEE TIFIN SEVA ===*\n';
   m+='*श्री जी टिफिन सेवा*\n';
@@ -454,7 +516,7 @@ function sendOrder(){
   m+='*'+(L==='hi'?'पता/Address':'Address')+':* '+addr+'\n';
   m+='-------------------------\n';
   m+='*'+(L==='hi'?'खाना/Meal':'Meal')+':* '+meals+'\n';
-  m+='*'+(L==='hi'?'व्यक्ति/Persons':'Persons')+':* '+st.qty+'\n';
+  if(st.meals.indexOf('lunch')>-1||st.meals.indexOf('dinner')>-1)m+='*'+(L==='hi'?'व्यक्ति/Persons':'Persons')+':* '+st.qty+'\n';
   m+='*'+(L==='hi'?'प्रकार/Type':'Type')+':* '+planTxt+'\n';
   m+='*'+(L==='hi'?'तारीख/Date':'Date')+':* '+st.date+'\n';
   if(st.slot)m+='*'+(L==='hi'?'समय/Time':'Time')+':* '+st.slot+'\n';
